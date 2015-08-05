@@ -8,6 +8,7 @@
 package com.bookmate.libs.imageviewer;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -36,7 +37,10 @@ public class ImageViewer extends ImageView {
 
     public ImageViewer(Context context, AttributeSet attrs) {
         super(context, attrs);
-        final int animationDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime); // CUR duration, background
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ImageViewer);
+        final int animationDuration = a.getInt(R.styleable.ImageViewer_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
+        a.recycle();
 
         if (getBackground() == null)
             setBackgroundColor(Color.argb(255, 0, 0, 0));
