@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.netimen.ui.imageviewer.ImageViewer
+    <com.bookmate.libs.imageviewer.ImageViewer
         android:id="@+id/image_viewer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

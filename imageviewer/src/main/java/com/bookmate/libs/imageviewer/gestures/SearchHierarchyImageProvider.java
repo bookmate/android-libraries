@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   03.08.15
  */
-package com.netimen.ui.imageviewer.gestures;
+package com.bookmate.libs.imageviewer.gestures;
 
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
@@ -13,8 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.netimen.ui.imageviewer.ImageProvider;
-import com.netimen.ui.imageviewer.ImageViewer;
+import com.bookmate.libs.imageviewer.ImageProvider;
+import com.bookmate.libs.imageviewer.ImageViewer;
 
 /**
  * tries to find an ImageView in layout tree at specified point

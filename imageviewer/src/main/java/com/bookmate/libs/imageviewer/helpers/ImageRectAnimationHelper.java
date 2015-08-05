@@ -5,15 +5,15 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   31.07.15
  */
-package com.netimen.ui.imageviewer.helpers;
+package com.bookmate.libs.imageviewer.helpers;
 
 import android.animation.ValueAnimator;
 import android.graphics.RectF;
 import android.view.animation.BounceInterpolator;
 
 import com.bookmate.libs.base.anim.Animations;
-import com.netimen.ui.imageviewer.ImageProvider;
-import com.netimen.ui.imageviewer.ImageViewer;
+import com.bookmate.libs.imageviewer.ImageProvider;
+import com.bookmate.libs.imageviewer.ImageViewer;
 
 public class ImageRectAnimationHelper {
     protected final ImageViewer imageViewer;

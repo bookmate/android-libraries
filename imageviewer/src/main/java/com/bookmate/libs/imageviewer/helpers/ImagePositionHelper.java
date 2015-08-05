@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   29.07.15
  */
-package com.netimen.ui.imageviewer.helpers;
+package com.bookmate.libs.imageviewer.helpers;
 
 import android.graphics.Matrix;
 import android.graphics.RectF;

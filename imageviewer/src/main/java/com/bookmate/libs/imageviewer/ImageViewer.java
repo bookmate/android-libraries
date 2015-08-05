@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   29.07.15
  */
-package com.netimen.ui.imageviewer;
+package com.bookmate.libs.imageviewer;
 
 import android.content.Context;
 import android.graphics.Matrix;
@@ -17,11 +17,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.netimen.ui.imageviewer.gestures.ImageViewerGesturesHelper;
-import com.netimen.ui.imageviewer.gestures.SearchHierarchyImageProvider;
-import com.netimen.ui.imageviewer.helpers.ImagePositionHelper;
-import com.netimen.ui.imageviewer.helpers.ImageRectAnimationHelper;
-import com.netimen.ui.imageviewer.helpers.RectCalculations;
+import com.bookmate.libs.imageviewer.gestures.ImageViewerGesturesHelper;
+import com.bookmate.libs.imageviewer.gestures.SearchHierarchyImageProvider;
+import com.bookmate.libs.imageviewer.helpers.ImagePositionHelper;
+import com.bookmate.libs.imageviewer.helpers.ImageRectAnimationHelper;
+import com.bookmate.libs.imageviewer.helpers.RectCalculations;
 
 public class ImageViewer extends ImageView {
     @SuppressWarnings("unused")

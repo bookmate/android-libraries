@@ -10,7 +10,7 @@ package com.netimen.ui.demo;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 
-import com.netimen.ui.imageviewer.ImageViewer;
+import com.bookmate.libs.imageviewer.ImageViewer;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;

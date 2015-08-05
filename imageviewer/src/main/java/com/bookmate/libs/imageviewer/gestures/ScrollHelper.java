@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   30.07.15
  */
-package com.netimen.ui.imageviewer.gestures;
+package com.bookmate.libs.imageviewer.gestures;
 
 import android.view.MotionEvent;
 

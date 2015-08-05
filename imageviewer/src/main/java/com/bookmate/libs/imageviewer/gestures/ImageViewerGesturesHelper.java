@@ -5,13 +5,13 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   28.07.15
  */
-package com.netimen.ui.imageviewer.gestures;
+package com.bookmate.libs.imageviewer.gestures;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
-import com.netimen.ui.imageviewer.ImageViewer;
+import com.bookmate.libs.imageviewer.ImageViewer;
 
 public class ImageViewerGesturesHelper {
     @SuppressWarnings("unused")
