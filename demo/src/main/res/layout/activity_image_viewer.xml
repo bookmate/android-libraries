@@ -4,15 +4,15 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:text="@string/caption_imageviewer"
-            android:textSize="@dimen/text_caption"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/caption_imageviewer"
+            android:textSize="@dimen/text_caption" />
 
         <include
             layout="@layout/layout_demo_common"

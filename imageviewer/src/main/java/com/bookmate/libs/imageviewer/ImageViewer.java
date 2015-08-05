@@ -8,6 +8,7 @@
 package com.bookmate.libs.imageviewer;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
@@ -36,6 +37,9 @@ public class ImageViewer extends ImageView {
     public ImageViewer(Context context, AttributeSet attrs) {
         super(context, attrs);
         final int animationDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime); // CUR duration, background
+
+        if (getBackground() == null)
+            setBackgroundColor(Color.argb(255, 0, 0, 0));
 
         imageProvider = createImageProvider();
         positionHelper = createPositionHelper();
