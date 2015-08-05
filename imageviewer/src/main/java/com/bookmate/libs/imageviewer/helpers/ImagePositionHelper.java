@@ -178,4 +178,4 @@ public class ImagePositionHelper {
         imageView.setImageMatrix(matrix);
     }
 
-} // CUR animation config
+}

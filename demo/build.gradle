@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId "com.bookmate.libs.demo"
-        minSdkVersion 16
+        minSdkVersion 14
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
