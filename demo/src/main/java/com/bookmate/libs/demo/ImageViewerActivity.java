@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   23.07.15
  */
-package com.netimen.ui.demo;
+package com.bookmate.libs.demo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;

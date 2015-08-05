@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   28.07.15
  */
-package com.netimen.ui.demo;
+package com.bookmate.libs.demo;
 
 import android.app.Activity;
 
