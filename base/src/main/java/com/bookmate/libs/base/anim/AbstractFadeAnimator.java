@@ -31,12 +31,19 @@ abstract class AbstractFadeAnimator {
     /**
      * @param preventRestarting if true, doesn't restart if desired visibility is the same as last time
      */
+    public void animateVisibility(final View view, final boolean show, boolean preventRestarting) {
+        animateVisibility(view, show, preventRestarting, null);
+    }
+
+    /**
+     * @param preventRestarting if true, doesn't restart if desired visibility is the same as last time
+     */
     public void animateVisibility(final View view, final boolean show, boolean preventRestarting, final Runnable endAction) {
-        int desiredVisility = show ? View.VISIBLE : View.INVISIBLE;
-        if (preventRestarting && desiredVisility == lastDesiredVisibility)
+        int desiredVisibility = show ? View.VISIBLE : View.INVISIBLE;
+        if (preventRestarting && desiredVisibility == lastDesiredVisibility)
             return;
 
-        lastDesiredVisibility = desiredVisility;
+        lastDesiredVisibility = desiredVisibility;
         if (show) view.setVisibility(View.VISIBLE);
 
         performAnimateVisibility(new Anim(view, show, endAction));

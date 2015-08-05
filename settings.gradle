@@ -1,1 +1,1 @@
-include ':demo', ':imageviewer', ':base'
+include ':demo', ':base', ':imageviewer', ':floatingtoolbar'
