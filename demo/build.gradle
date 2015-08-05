@@ -37,6 +37,7 @@ dependencies {
     apt "org.androidannotations:androidannotations:3.3.1"
 
     compile project(':imageviewer')
+    compile project(':floatingtoolbar')
 }
 
 

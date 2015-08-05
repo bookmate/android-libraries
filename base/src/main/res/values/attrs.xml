@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="ImageViewer">
+    <declare-styleable name="Animatable">
         <attr name="animationDuration" format="integer" />
     </declare-styleable>
 </resources>

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="image_viewer_background">#F0000000</color>
+    <color name="bg_image_viewer">#F0000000</color>
+
+    <color name="bg_floating_toolbar">#D6000000</color>
+    <color name="bg_floating_toolbar_item">#4569F9</color>
 </resources>

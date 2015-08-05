@@ -38,8 +38,8 @@ public class ImageViewer extends ImageView {
     public ImageViewer(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ImageViewer);
-        final int animationDuration = a.getInt(R.styleable.ImageViewer_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Animatable);
+        final int animationDuration = a.getInt(R.styleable.Animatable_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
         a.recycle();
 
         if (getBackground() == null)

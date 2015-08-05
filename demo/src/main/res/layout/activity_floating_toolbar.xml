@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,11 +21,17 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <com.bookmate.libs.imageviewer.ImageViewer
-        android:id="@+id/image_viewer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <com.bookmate.libs.floatingtoolbar.FloatingToolbar
+        android:id="@+id/floating_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin"
+        android:layout_marginRight="@dimen/margin"
+        android:background="@drawable/bg_floating_toolbar"
+        android:paddingLeft="@dimen/margin"
+        android:paddingRight="@dimen/margin"
         app:animationDuration="@integer/anim_duration"
-        android:background="@color/bg_image_viewer" />
+        app:backButtonLayout="@layout/floating_toolbar_more_button"
+        app:moreButtonLayout="@layout/floating_toolbar_back_button" />
 
 </FrameLayout>

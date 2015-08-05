@@ -25,7 +25,6 @@ import android.widget.Adapter;
 import android.widget.FrameLayout;
 
 import com.bookmate.libs.base.anim.FadeAnimator;
-import com.netimen.floatingtoolbar.R;
 
 public class FloatingToolbar extends FrameLayout {
     private static final String LOG_TAG = FloatingToolbar.class.getSimpleName();
@@ -60,7 +59,7 @@ public class FloatingToolbar extends FrameLayout {
     public FloatingToolbar(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FloatingToolbar);
-        animationDuration = a.getInt(R.styleable.FloatingToolbar_animationDuration, 0);
+        animationDuration = a.getInt(R.styleable.Animatable_animationDuration, 0);
         moreButtonLayout = a.getResourceId(R.styleable.FloatingToolbar_moreButtonLayout, 0);
         backButtonLayout = a.getResourceId(R.styleable.FloatingToolbar_backButtonLayout, 0);
         a.recycle();
