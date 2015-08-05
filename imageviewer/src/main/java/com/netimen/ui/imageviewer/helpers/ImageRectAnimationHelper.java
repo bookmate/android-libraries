@@ -11,7 +11,7 @@ import android.animation.ValueAnimator;
 import android.graphics.RectF;
 import android.view.animation.BounceInterpolator;
 
-import com.netimen.ui.base.anim.Animations;
+import com.bookmate.libs.base.anim.Animations;
 import com.netimen.ui.imageviewer.ImageProvider;
 import com.netimen.ui.imageviewer.ImageViewer;
 

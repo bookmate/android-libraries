@@ -9,7 +9,7 @@ package com.netimen.ui.imageviewer.gestures;
 
 import android.view.MotionEvent;
 
-import com.netimen.ui.base.Utils;
+import com.bookmate.libs.base.Utils;
 
 public class FlingHelper {
     protected final ImageViewerGesturesHelper gestures;

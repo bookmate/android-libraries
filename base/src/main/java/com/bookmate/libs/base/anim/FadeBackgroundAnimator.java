@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   28.07.15
  */
-package com.netimen.ui.base.anim;
+package com.bookmate.libs.base.anim;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;

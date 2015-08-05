@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   01.07.15
  */
-package com.netimen.ui.base.anim;
+package com.bookmate.libs.base.anim;
 
 
 /**
