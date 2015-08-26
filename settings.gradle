@@ -1,1 +1,1 @@
-include ':demo', ':base', ':imageviewer', ':floatingtoolbar'
+include ':demo', ':base', ':imageviewer', ':floatingtoolbar', ':traits-api', ':traits-apt'
