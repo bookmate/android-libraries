@@ -6,6 +6,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -17,7 +18,6 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 @SupportedAnnotationTypes("com.bookmate.traits.Event")
@@ -51,12 +51,15 @@ public class AnnotationProcessor extends AbstractProcessor {
 //            for (TypeElement annotation : annotations)
 //                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA" + annotation.getEnclosingElement().getSimpleName() + " " + annotation.getSimpleName());
         for (Element elem : roundEnv.getElementsAnnotatedWith(Event.class)) {
-            final Element classElement = elem.getEnclosingElement();
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, elem.getSimpleName() + " BBB " + classElement.getSimpleName());
+            final TypeElement classElement = (TypeElement) elem.getEnclosingElement();
+//            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, elem.getSimpleName() + " BBB " + classElement.getQualifiedName());
             try {
                 JavaFileObject jfo = null;
-                jfo = processingEnv.getFiler().createSourceFile(classElement.getSimpleName());
-                javaFile.writeTo(jfo.openWriter());
+                jfo = processingEnv.getFiler().createSourceFile(classElement.getQualifiedName() + "Helper_");
+                final Writer out = jfo.openWriter();
+                javaFile.writeTo(out);
+                out.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
