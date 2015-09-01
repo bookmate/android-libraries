@@ -1,8 +1,9 @@
-package com.bookmate.traits;
+package com.bookmate.libs.traits;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 
@@ -32,30 +34,38 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        MethodSpec main = MethodSpec.methodBuilder("main")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(void.class)
-                .addParameter(String[].class, "args")
-                .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
-                .build();
-
-        TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addMethod(main)
-                .build();
-
-        JavaFile javaFile = JavaFile.builder("com.example.helloworld", helloWorld)
-                .build();
-
 //        if (annotations.size() > 0)
 //            for (TypeElement annotation : annotations)
 //                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA" + annotation.getEnclosingElement().getSimpleName() + " " + annotation.getSimpleName());
         for (Element elem : roundEnv.getElementsAnnotatedWith(Event.class)) {
             final TypeElement classElement = (TypeElement) elem.getEnclosingElement();
-//            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, elem.getSimpleName() + " BBB " + classElement.getQualifiedName());
+
+            final String traitHelperClassName = classElement.getSimpleName() + "Helper_";
+//            MethodSpec main = MethodSpec.methodBuilder("main")
+//                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+//                    .returns(void.class)
+//                    .addParameter(String[].class, "args")
+//                    .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
+//                    .build();
+
+            MethodSpec flux = MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(TypeName.get(classElement.asType()), "trait", Modifier.FINAL)
+                    .addStatement("this.$N = $N", "trait", "trait")
+                    .build();
+
+            TypeSpec traitHelper = TypeSpec.classBuilder(traitHelperClassName)
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                    .addMethod(flux)
+                    .build();
+
+            final String packageName = ((PackageElement) classElement.getEnclosingElement()).getQualifiedName().toString();
+            JavaFile javaFile = JavaFile.builder(packageName, traitHelper)
+                    .build();
+
+//            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, packageName);
             try {
-                JavaFileObject jfo = null;
-                jfo = processingEnv.getFiler().createSourceFile(classElement.getQualifiedName() + "Helper_");
+                JavaFileObject jfo = processingEnv.getFiler().createSourceFile(packageName + "." + traitHelperClassName);
                 final Writer out = jfo.openWriter();
                 javaFile.writeTo(out);
                 out.close();

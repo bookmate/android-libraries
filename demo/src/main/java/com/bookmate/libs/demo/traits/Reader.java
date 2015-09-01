@@ -7,9 +7,12 @@
  */
 package com.bookmate.libs.demo.traits;
 
-import com.bookmate.traits.Event;
+import com.bookmate.libs.traits.Bus;
+import com.bookmate.libs.traits.Event;
 
 public class Reader {
+    Bus bus;
+
     @Event
     void f() {
 

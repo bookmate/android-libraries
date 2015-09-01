@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   13.03.15
  */
-package com.bookmate.traits;
+package com.bookmate.libs.traits;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

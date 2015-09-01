@@ -1,4 +1,4 @@
-package com.bookmate.traits;
+package com.bookmate.libs.traits;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class Bus {
     private final Map<Class<?>, List<EventListener>> eventListeners = new HashMap<>();
 
     /**
-     * it's better not to call this method directly, but to use {@link com.bookmate.traits.Request} instead
+     * it's better not to call this method directly, but to use {@link com.bookmate.libs.traits.Request} instead
      */
     public <RESULT, R extends Request<RESULT>> void register(Class<R> requestClass, RequestProcessor<RESULT, R> processor) {
         requestProcessors.put(requestClass, processor);
@@ -34,7 +34,7 @@ public class Bus {
     ///
 
     /**
-     * it's better not to call this method directly, but to use {@link com.bookmate.traits.Event} instead
+     * it's better not to call this method directly, but to use {@link com.bookmate.libs.traits.Event} instead
      */
     public <E> void register(Class<E> eventClass, EventListener<E> listener) {
         List<EventListener> listeners = eventListeners.get(eventClass);
