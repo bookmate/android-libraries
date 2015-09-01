@@ -3,18 +3,14 @@
  * All Rights Reserved.
  * <p/>
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
- * Date:   28.08.15
+ * Date:   16.08.15
  */
 package com.bookmate.libs.demo.traits;
 
-import com.bookmate.libs.traits.Bus;
-import com.bookmate.libs.traits.Event;
+import com.bookmate.libs.demo.traits.readercode.ReadingSystem;
 
-public class Reader {
-    Bus bus;
+public class ReaderSharedFields_ {
 
-    @Event
-    void f() {
+    ReadingSystem readingSystem;
 
-    }
 }
