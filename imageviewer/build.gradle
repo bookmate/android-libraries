@@ -1,21 +1,21 @@
 apply plugin: 'com.android.library'
-//apply plugin: 'com.novoda.bintray-release'
-//
-//buildscript {
-//    repositories {
-//        jcenter()
-//    }
-//    dependencies {
-//        classpath 'com.novoda:bintray-release:0.3.2'
-//    }
-//}
+apply plugin: 'com.novoda.bintray-release'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.3.4'
+    }
+}
 
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 16 // ViewPropertyAnimator.withEndAction is 16+
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -32,4 +32,15 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0' // needed for annotations like @LayoutRes etc
     compile project(':base');
+}
+
+publish { // for publishing run: ./gradlew clean build bintrayUpload -PbintrayKey=<KEY> -PdryRun=false    (<KEY> is here https://bintray.com/profile/edit (login and see)) https://github.com/novoda/bintray-release
+    userOrg = 'bookmate'
+    bintrayUser = 'bookmate'
+    repoName = 'android-libraries'
+    groupId = 'com.bookmate.libs'
+    artifactId = 'imageviewer'
+    publishVersion = '1.0.2'
+    desc = 'Simple imageviewer library'
+    website = 'https://github.com/novoda/bintray-release'
 }
