@@ -25,14 +25,6 @@ public class Bus {
         requestProcessors.put(requestClass, processor);
     }
 
-    @SuppressWarnings("unchecked")
-    public <RESULT, R extends Request<RESULT>> RESULT request(R request) {
-        final RequestProcessor<RESULT, R> processor = requestProcessors.get(request.getClass());
-        return processor == null ? request.defaultResult() : processor.process(request);
-    }
-
-    ///
-
     /**
      * it's better not to call this method directly, but to use {@link com.bookmate.libs.traits.Event} instead
      */
@@ -43,6 +35,24 @@ public class Bus {
             eventListeners.put(eventClass, listeners);
         }
         listeners.add(listener);
+    }
+
+    public <RESULT, R extends Request<RESULT>> void unregister(Class<R> requestClass) {
+        requestProcessors.remove(requestClass);
+    }
+
+    public <E> void unregister(Class<E> eventClass, EventListener<E> listener) {
+        List<EventListener> listeners = eventListeners.get(eventClass);
+        if (listeners != null) listeners.remove(listener);
+    }
+
+
+    ///
+
+    @SuppressWarnings("unchecked")
+    public <RESULT, R extends Request<RESULT>> RESULT request(R request) {
+        final RequestProcessor<RESULT, R> processor = requestProcessors.get(request.getClass());
+        return processor == null ? request.defaultResult() : processor.process(request);
     }
 
     @SuppressWarnings("unchecked")

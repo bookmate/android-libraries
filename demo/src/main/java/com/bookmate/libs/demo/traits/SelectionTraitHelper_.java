@@ -11,8 +11,10 @@ import com.bookmate.libs.demo.traits.readercode.SelectionStart;
 import com.bookmate.libs.traits.Bus;
 
 public class SelectionTraitHelper_ {
+    private final Bus.EventListener<SelectionStart> selectionStartEventListener;
+
     SelectionTraitHelper_(final SelectionTrait selectionTrait) {
-        final Bus.EventListener<SelectionStart> selectionStartEventListener = new Bus.EventListener<SelectionStart>() {
+         selectionStartEventListener = new Bus.EventListener<SelectionStart>() {
             @Override
             public void onEvent(SelectionStart event) {
                 selectionTrait.onSelectionStart(event);
