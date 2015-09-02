@@ -20,9 +20,10 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
-@SupportedAnnotationTypes("com.bookmate.traits.Event")
+@SupportedAnnotationTypes("com.bookmate.libs.traits.Event")
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 @AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor {
@@ -63,7 +64,7 @@ public class AnnotationProcessor extends AbstractProcessor {
             JavaFile javaFile = JavaFile.builder(packageName, traitHelper)
                     .build();
 
-//            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, packageName);
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, packageName);
             try {
                 JavaFileObject jfo = processingEnv.getFiler().createSourceFile(packageName + "." + traitHelperClassName);
                 final Writer out = jfo.openWriter();

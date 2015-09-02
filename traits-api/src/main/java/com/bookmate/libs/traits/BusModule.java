@@ -7,11 +7,16 @@
  */
 package com.bookmate.libs.traits;
 
-//@Module
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
+
+@Module
 public class BusModule {
 
-//    @Provides
-//    @Singleton
+    @Provides
+    @Singleton
     Bus bus() {
         return new Bus();
     }
