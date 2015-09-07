@@ -19,9 +19,12 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.MirroredTypeException;
 import javax.tools.JavaFileObject;
 
 @SupportedAnnotationTypes("com.bookmate.libs.traits.Event")
@@ -29,6 +32,7 @@ import javax.tools.JavaFileObject;
 @AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor {
 
+    private final SourceHelper sourceHelper = new SourceHelper();
 //    @Override
 //    public synchronized void init(ProcessingEnvironment processingEnv) {
 //        super.init(processingEnv);
@@ -36,43 +40,11 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-//        if (annotations.size() > 0)
-//            for (TypeElement annotation : annotations)
-//                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA" + annotation.getEnclosingElement().getSimpleName() + " " + annotation.getSimpleName());
-        for (Element element : roundEnv.getElementsAnnotatedWith(Event.class)) {
+        sourceHelper.init(processingEnv, roundEnv);
+        for (Element e : roundEnv.getElementsAnnotatedWith(Event.class)) {
+            ExecutableElement element = (ExecutableElement) e;
             final TypeElement classElement = (TypeElement) element.getEnclosingElement();
-            final String methodName = element.getSimpleName().toString(); // isPublic
-
-//            if (Character.isUpperCase(methodName.charAt(0))) { cur
-//                methodNameEqualsClassNameError(element, methodName);
-//                return null;
-//            }
-//            TypeMirror classType = annotationHelper.extractAnnotationClassParameter(element, getTarget());
-//
-//            if (classType == null && firstParamType == ParamType.EVENT_OR_REQUEST) // trying to extract the event/request class from parameters
-//                classType = element.getParameters().get(0).asType();
-//            if (classType == null && secondParamType == ParamType.EVENT_OR_REQUEST) // trying to extract the event/request class from parameters
-//                classType = element.getParameters().get(1).asType();
-//
-//            String className, extractedName = null;
-//            if (classType != null) {
-//                className = classType.toString();
-//            } else {
-//                extractedName = methodName.startsWith("on") ? methodName.substring(2) : methodName;
-//                extractedName = extractedName.substring(0, 1).toUpperCase() + extractedName.substring(1); // making it start from an uppercase letter
-//                className = SourceHelper.getClassesFullNameMap(processingEnv).get(extractedName); // trying to guess the package
-//                if (className == null) {
-//                    classNotFoundError(element, methodName, extractedName);
-//                    return null;
-//                }
-//            }
             final String traitHelperClassName = classElement.getSimpleName() + "Helper_";
-//            MethodSpec main = MethodSpec.methodBuilder("main")
-//                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-//                    .returns(void.class)
-//                    .addParameter(String[].class, "args")
-//                    .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
-//                    .build();
 
             final String traitFieldName = "trait";
             final TypeName traitTypeName = TypeName.get(classElement.asType());
@@ -82,12 +54,10 @@ public class AnnotationProcessor extends AbstractProcessor {
                     .addStatement("this.$N = $N", traitFieldName, traitFieldName)
                     .build();
 
-
             TypeSpec traitHelper = TypeSpec.classBuilder(traitHelperClassName)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addField(traitTypeName, traitFieldName, Modifier.PRIVATE, Modifier.FINAL)
-                    .addField(ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), ClassName.get("com.bookmate.libs.demo.traits.readercode", "PageTurn")), traitFieldName, Modifier.PRIVATE, Modifier.FINAL)
-                    .addField(ClassName.get("", "PageTurn"), traitFieldName, Modifier.PRIVATE, Modifier.FINAL)
+                    .addField(ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), getEventOrRequestClassName(element)), "pageTurnListener", Modifier.PRIVATE, Modifier.FINAL)
                     .addMethod(constructor)
                     .build();
 
@@ -102,43 +72,49 @@ public class AnnotationProcessor extends AbstractProcessor {
                 javaFile.writeTo(out);
                 out.close();
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
             }
-//            Event complexity = element.getAnnotation(Event.class);
-//            String message = "annotation found in " + element.getSimpleName()
-//                    + " with complexity " ;
-//            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
-//            if (element.getKind() == ElementKind.CLASS) {
-//                TypeElement classElement = (TypeElement) element;
-//                PackageElement packageElement =
-//                        (PackageElement) classElement.getEnclosingElement();
-//
-//                try {
-////                    processingEnv.getFiler().getResource()
-//                    final String srcName = String.valueOf(classElement.getSimpleName());
-//                    if (srcName.endsWith("_"))
-//                        continue;
-//                    final String suffix = "_";
-//                    final String name = srcName + suffix;
-//                    JavaFileObject jfo = processingEnv.getFiler().createSourceFile(classElement.getQualifiedName() + suffix);
-//                    BufferedWriter bw = new BufferedWriter(jfo.openWriter());
-//                    bw.append("package ");
-//                    bw.append(packageElement.getQualifiedName());
-//                    bw.append(";");
-//                    bw.newLine();
-//                    bw.newLine();
-//                    bw.append("class ").append(name).append(" extends ").append(srcName).append(" {}");
-//                    bw.close();
-//                } catch (IOException e) {
-//                    processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, e.toString());
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        }
         }
         return true; // no further processing of this annotation type
+    }
+
+    /**
+     * tries to extract from annotation parameter, method parameter, method name
+     */
+    private TypeName getEventOrRequestClassName(ExecutableElement element) {
+        try {
+            Class<?> eventOrRequestClass;
+            final Event annotation = element.getAnnotation(Event.class);
+            if (annotation != null)
+                eventOrRequestClass = annotation.value();
+            else
+                eventOrRequestClass = element.getAnnotation(Request.class).value(); // if there is no @Event, there must be @Request
+
+            if (eventOrRequestClass != Object.class)
+                return ClassName.get(eventOrRequestClass);
+        } catch (MirroredTypeException mte) { // http://hannesdorfmann.com/annotation-processing/annotationprocessing101/
+            DeclaredType classTypeMirror = (DeclaredType) mte.getTypeMirror();
+            TypeElement classTypeElement = (TypeElement) classTypeMirror.asElement();
+            final String qualifiedSuperClassName = classTypeElement.getQualifiedName().toString();
+            if (!"java.lang.Object".equals(qualifiedSuperClassName))
+                return ClassName.get(classTypeElement);
+        }
+
+        if (element.getParameters().size() > 0)
+            return ClassName.get(element.getParameters().get(0).asType());
+
+        String methodName = element.getSimpleName().toString(); // isPublic
+//            if (Character.isUpperCase(methodName.charAt(0))) { cur
+//                methodNameEqualsClassNameError(element, methodName);
+//                return null;
+//            }
+        methodName = methodName.startsWith("on") ? methodName.substring(2) : methodName;
+        methodName = methodName.substring(0, 1).toUpperCase() + methodName.substring(1); // making it start from an uppercase letter
+        final TypeElement eventOrRequestTypeElement = sourceHelper.getTypeElement(methodName);
+        if (eventOrRequestTypeElement != null)
+            return ClassName.get(eventOrRequestTypeElement);
+
+        return null;
     }
 
 }
