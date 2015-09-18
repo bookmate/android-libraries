@@ -18,22 +18,18 @@ import org.androidannotations.annotations.EBean;
 public class MarkersTrait extends BookmateReaderTrait {
     @Event(Document.class)
     void onDocument() {
-
     }
 
     @Event
     void onPageTurn() {
-
     }
 
     @Event
     void pageTurn() {
-
     }
 
     @Event
     void PageTurn() {
-
     }
 
     @Event

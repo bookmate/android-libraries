@@ -40,6 +40,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+//            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA");
         sourceHelper.init(processingEnv, roundEnv);
         for (Element e : roundEnv.getElementsAnnotatedWith(Event.class)) {
             ExecutableElement element = (ExecutableElement) e;
@@ -48,16 +49,21 @@ public class AnnotationProcessor extends AbstractProcessor {
 
             final String traitFieldName = "trait";
             final TypeName traitTypeName = TypeName.get(classElement.asType());
+            final TypeName eventOrRequestClassName = getEventOrRequestClassName(element);
+            final String listenerName = ((ClassName) eventOrRequestClassName).simpleName() + "Listener";
+            final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
+
             MethodSpec constructor = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PUBLIC)
                     .addParameter(traitTypeName, traitFieldName, Modifier.FINAL)
                     .addStatement("this.$N = $N", traitFieldName, traitFieldName)
+                    .addStatement("$N = new $T()", listenerName, listenerClass)
                     .build();
 
             TypeSpec traitHelper = TypeSpec.classBuilder(traitHelperClassName)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addField(traitTypeName, traitFieldName, Modifier.PRIVATE, Modifier.FINAL)
-                    .addField(ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), getEventOrRequestClassName(element)), "pageTurnListener", Modifier.PRIVATE, Modifier.FINAL)
+                    .addField(listenerClass, listenerName, Modifier.PRIVATE, Modifier.FINAL)
                     .addMethod(constructor)
                     .build();
 
