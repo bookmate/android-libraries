@@ -52,12 +52,20 @@ public class AnnotationProcessor extends AbstractProcessor {
             final TypeName eventOrRequestClassName = getEventOrRequestClassName(element);
             final String listenerName = ((ClassName) eventOrRequestClassName).simpleName() + "Listener";
             final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
+            final TypeSpec listener = TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerClass)
+                    .addMethod(MethodSpec.methodBuilder("onEvent")
+                            .addAnnotation(Override.class)
+                            .addModifiers(Modifier.PUBLIC)
+                            .addParameter(eventOrRequestClassName, "event")
+                            .addStatement("$N.$N($N)", traitFieldName, Utils.methodName(element), "event")
+                            .build())
+                    .build();
 
             MethodSpec constructor = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PUBLIC)
                     .addParameter(traitTypeName, traitFieldName, Modifier.FINAL)
                     .addStatement("this.$N = $N", traitFieldName, traitFieldName)
-                    .addStatement("$N = new $T()", listenerName, listenerClass)
+                    .addStatement("$N = $L", listenerName, listener)
                     .build();
 
             TypeSpec traitHelper = TypeSpec.classBuilder(traitHelperClassName)
@@ -109,7 +117,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         if (element.getParameters().size() > 0)
             return ClassName.get(element.getParameters().get(0).asType());
 
-        String methodName = element.getSimpleName().toString(); // isPublic
+        String methodName = Utils.methodName(element); // isPublic
 //            if (Character.isUpperCase(methodName.charAt(0))) { cur
 //                methodNameEqualsClassNameError(element, methodName);
 //                return null;
