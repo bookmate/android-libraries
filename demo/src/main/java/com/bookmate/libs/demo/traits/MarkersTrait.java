@@ -9,7 +9,6 @@ package com.bookmate.libs.demo.traits;
 
 import com.bookmate.libs.demo.traits.bookmate.BookmateReaderTrait;
 import com.bookmate.libs.demo.traits.readercode.PageTurn;
-import com.bookmate.libs.demo.traits.readercode.SelectionStart;
 import com.bookmate.libs.traits.Event;
 
 import org.androidannotations.annotations.EBean;
@@ -29,10 +28,6 @@ public class MarkersTrait extends BookmateReaderTrait {
     }
 
     @Event
-    void PageTurn() {
-    }
-
-    @Event
-    void onSelectionStart(SelectionStart event) {
+    void onPageTurned(PageTurn event) {
     }
 }

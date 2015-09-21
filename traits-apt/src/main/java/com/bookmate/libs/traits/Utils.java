@@ -13,4 +13,12 @@ public class Utils {
     public static String methodName(ExecutableElement element) {
         return element.getSimpleName().toString();
     }
+
+    static String toUpperCaseFirstCharacter(String methodName) {
+        return methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
+    }
+
+    static String toLowerCaseFirstCharacter(String methodName) {
+        return methodName.substring(0, 1).toLowerCase() + methodName.substring(1);
+    }
 }

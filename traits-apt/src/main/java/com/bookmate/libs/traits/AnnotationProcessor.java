@@ -42,10 +42,22 @@ public class AnnotationProcessor extends AbstractProcessor {
 
         final TypeSpec.Builder classBuilder;
         final MethodSpec.Builder constructorBuilder;
+        /**
+         * how many listeners to this event we already generated in this class
+         */
+        final Map<String, Integer> listenersCountMap = new HashMap<>();
 
         public BuildingClass(TypeSpec.Builder classBuilder, MethodSpec.Builder constructorBuilder) {
             this.classBuilder = classBuilder;
             this.constructorBuilder = constructorBuilder;
+        }
+
+        public String addNewListener(String eventOrRequestClassName) {
+            Integer listenersCount = listenersCountMap.get(eventOrRequestClassName);
+            if (listenersCount == null)
+                listenersCount = 0;
+            listenersCountMap.put(eventOrRequestClassName, listenersCount + 1);
+            return listenersCount > 0 ? String.valueOf(listenersCount) : "";
         }
     }
 
@@ -57,14 +69,15 @@ public class AnnotationProcessor extends AbstractProcessor {
             ExecutableElement element = (ExecutableElement) e; // CUR check
             BuildingClass helper = getHelperClass((TypeElement) element.getEnclosingElement());
 
-            final TypeName eventOrRequestClassName = getEventOrRequestClassName(element);
-            final String listenerName = ((ClassName) eventOrRequestClassName).simpleName() + "Listener"; // cur
-            final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
+            final TypeName eventOrRequestClass = getEventOrRequestClass(element); // cur what if null
+            final String eventOrRequestClassName = ((ClassName) eventOrRequestClass).simpleName();
+            final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName) + "Listener" + helper.addNewListener(eventOrRequestClassName);
+            final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClass);
             final TypeSpec listener = TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerClass)
                     .addMethod(MethodSpec.methodBuilder("onEvent")
                             .addAnnotation(Override.class)
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(eventOrRequestClassName, "event")
+                            .addParameter(eventOrRequestClass, "event")
                             .addStatement("$N.$N($N)", BuildingClass.TRAIT_FIELD_NAME, Utils.methodName(element), "event")
                             .build())
                     .build();
@@ -114,7 +127,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     /**
      * tries to extract from annotation parameter, method parameter, method name
      */
-    private TypeName getEventOrRequestClassName(ExecutableElement element) {
+    private TypeName getEventOrRequestClass(ExecutableElement element) {
         try {
             Class<?> eventOrRequestClass;
             final Event annotation = element.getAnnotation(Event.class);
@@ -137,12 +150,8 @@ public class AnnotationProcessor extends AbstractProcessor {
             return ClassName.get(element.getParameters().get(0).asType());
 
         String methodName = Utils.methodName(element); // isPublic
-//            if (Character.isUpperCase(methodName.charAt(0))) { cur
-//                methodNameEqualsClassNameError(element, methodName);
-//                return null;
-//            }
         methodName = methodName.startsWith("on") ? methodName.substring(2) : methodName;
-        methodName = methodName.substring(0, 1).toUpperCase() + methodName.substring(1); // making it start from an uppercase letter
+        methodName = Utils.toUpperCaseFirstCharacter(methodName);
         final TypeElement eventOrRequestTypeElement = sourceHelper.getTypeElement(methodName);
         if (eventOrRequestTypeElement != null)
             return ClassName.get(eventOrRequestTypeElement);
