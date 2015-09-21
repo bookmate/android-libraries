@@ -10,6 +10,8 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -33,63 +35,80 @@ import javax.tools.JavaFileObject;
 public class AnnotationProcessor extends AbstractProcessor {
 
     private final SourceHelper sourceHelper = new SourceHelper();
-//    @Override
-//    public synchronized void init(ProcessingEnvironment processingEnv) {
-//        super.init(processingEnv);
-//    }
+    private final Map<TypeElement, BuildingClass> helpersMap = new HashMap<>();
+
+    private static class BuildingClass {
+        public static final String TRAIT_FIELD_NAME = "trait";
+
+        final TypeSpec.Builder classBuilder;
+        final MethodSpec.Builder constructorBuilder;
+
+        public BuildingClass(TypeSpec.Builder classBuilder, MethodSpec.Builder constructorBuilder) {
+            this.classBuilder = classBuilder;
+            this.constructorBuilder = constructorBuilder;
+        }
+    }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 //            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA");
         sourceHelper.init(processingEnv, roundEnv);
         for (Element e : roundEnv.getElementsAnnotatedWith(Event.class)) {
-            ExecutableElement element = (ExecutableElement) e;
-            final TypeElement classElement = (TypeElement) element.getEnclosingElement();
-            final String traitHelperClassName = classElement.getSimpleName() + "Helper_";
+            ExecutableElement element = (ExecutableElement) e; // CUR check
+            BuildingClass helper = getHelperClass((TypeElement) element.getEnclosingElement());
 
-            final String traitFieldName = "trait";
-            final TypeName traitTypeName = TypeName.get(classElement.asType());
             final TypeName eventOrRequestClassName = getEventOrRequestClassName(element);
-            final String listenerName = ((ClassName) eventOrRequestClassName).simpleName() + "Listener";
+            final String listenerName = ((ClassName) eventOrRequestClassName).simpleName() + "Listener"; // cur
             final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
             final TypeSpec listener = TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerClass)
                     .addMethod(MethodSpec.methodBuilder("onEvent")
                             .addAnnotation(Override.class)
                             .addModifiers(Modifier.PUBLIC)
                             .addParameter(eventOrRequestClassName, "event")
-                            .addStatement("$N.$N($N)", traitFieldName, Utils.methodName(element), "event")
+                            .addStatement("$N.$N($N)", BuildingClass.TRAIT_FIELD_NAME, Utils.methodName(element), "event")
                             .build())
                     .build();
 
-            MethodSpec constructor = MethodSpec.constructorBuilder()
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(traitTypeName, traitFieldName, Modifier.FINAL)
-                    .addStatement("this.$N = $N", traitFieldName, traitFieldName)
-                    .addStatement("$N = $L", listenerName, listener)
-                    .build();
+            helper.constructorBuilder.addStatement("$N = $L", listenerName, listener).build();
+            helper.classBuilder.addField(listenerClass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
+        }
 
-            TypeSpec traitHelper = TypeSpec.classBuilder(traitHelperClassName)
-                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                    .addField(traitTypeName, traitFieldName, Modifier.PRIVATE, Modifier.FINAL)
-                    .addField(listenerClass, listenerName, Modifier.PRIVATE, Modifier.FINAL)
-                    .addMethod(constructor)
-                    .build();
+        for (Map.Entry<TypeElement, BuildingClass> helperEntry : helpersMap.entrySet()) {
+            final String packageName = ((PackageElement) helperEntry.getKey().getEnclosingElement()).getQualifiedName().toString();
+            final BuildingClass helper = helperEntry.getValue();
 
-            final String packageName = ((PackageElement) classElement.getEnclosingElement()).getQualifiedName().toString();
-            JavaFile javaFile = JavaFile.builder(packageName, traitHelper)
-                    .build();
-
-//            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, packageName);
+            final TypeSpec helperClass = helper.classBuilder.addMethod(helper.constructorBuilder.build()).build();
+            JavaFile javaFile = JavaFile.builder(packageName, helperClass).build();
             try {
-                JavaFileObject jfo = processingEnv.getFiler().createSourceFile(packageName + "." + traitHelperClassName);
+                JavaFileObject jfo = processingEnv.getFiler().createSourceFile(packageName + "." + helperClass.name);
                 final Writer out = jfo.openWriter();
                 javaFile.writeTo(out);
                 out.close();
-
             } catch (IOException ignored) {
             }
         }
         return true; // no further processing of this annotation type
+    }
+
+    private BuildingClass getHelperClass(TypeElement classElement) {
+        BuildingClass buildingClass = helpersMap.get(classElement);
+        if (buildingClass != null)
+            return buildingClass;
+
+        final TypeName traitTypeName = TypeName.get(classElement.asType());
+
+        MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(traitTypeName, BuildingClass.TRAIT_FIELD_NAME, Modifier.FINAL)
+                .addStatement("this.$N = $N", BuildingClass.TRAIT_FIELD_NAME, BuildingClass.TRAIT_FIELD_NAME);
+
+        TypeSpec.Builder helperBuilder = TypeSpec.classBuilder(classElement.getSimpleName() + "Helper_")
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addField(traitTypeName, BuildingClass.TRAIT_FIELD_NAME, Modifier.PRIVATE, Modifier.FINAL);
+
+        buildingClass = new BuildingClass(helperBuilder, constructorBuilder);
+        helpersMap.put(classElement, buildingClass);
+        return buildingClass;
     }
 
     /**
