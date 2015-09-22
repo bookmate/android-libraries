@@ -66,10 +66,10 @@ public class AnnotationProcessor extends AbstractProcessor {
 //            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA");
         sourceHelper.init(processingEnv, roundEnv);
         for (Element e : roundEnv.getElementsAnnotatedWith(Event.class)) {
-            ExecutableElement element = (ExecutableElement) e; // CUR check
-            BuildingClass helper = getHelperClass((TypeElement) element.getEnclosingElement());
+            ExecutableElement method = (ExecutableElement) e; // CUR check
+            BuildingClass helper = getHelperClass((TypeElement) method.getEnclosingElement());
 
-            final TypeName eventOrRequestClass = getEventOrRequestClass(element); // cur what if null
+            final TypeName eventOrRequestClass = getEventOrRequestClass(method); // cur what if null
             final String eventOrRequestClassName = ((ClassName) eventOrRequestClass).simpleName();
             final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName) + "Listener" + helper.addNewListener(eventOrRequestClassName);
             final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClass);
@@ -78,7 +78,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                             .addAnnotation(Override.class)
                             .addModifiers(Modifier.PUBLIC)
                             .addParameter(eventOrRequestClass, "event")
-                            .addStatement("$N.$N($N)", BuildingClass.TRAIT_FIELD_NAME, Utils.methodName(element), "event")
+                            .addStatement(method.getParameters().size() > 0 ? "$N.$N($N)" : "$N.$N()", BuildingClass.TRAIT_FIELD_NAME, Utils.methodName(method), "event")
                             .build())
                     .build();
 
