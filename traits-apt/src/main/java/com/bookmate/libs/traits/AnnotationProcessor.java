@@ -52,7 +52,7 @@ public class AnnotationProcessor extends AbstractProcessor {
             this.constructorBuilder = constructorBuilder;
         }
 
-        public String addNewListener(String eventOrRequestClassName) {
+        public String getListenersCount(String eventOrRequestClassName) {
             Integer listenersCount = listenersCountMap.get(eventOrRequestClassName);
             if (listenersCount == null)
                 listenersCount = 0;
@@ -64,14 +64,14 @@ public class AnnotationProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 //            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA");
-        sourceHelper.init(processingEnv, roundEnv);
+        sourceHelper.buildClassesMap(processingEnv, roundEnv);
         for (Element e : roundEnv.getElementsAnnotatedWith(Event.class)) {
             ExecutableElement method = (ExecutableElement) e; // CUR check
             BuildingClass helper = getHelperClass((TypeElement) method.getEnclosingElement());
 
             final TypeName eventOrRequestClass = getEventOrRequestClass(method); // cur what if null
             final String eventOrRequestClassName = ((ClassName) eventOrRequestClass).simpleName();
-            final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName) + "Listener" + helper.addNewListener(eventOrRequestClassName);
+            final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName) + "Listener" + helper.getListenersCount(eventOrRequestClassName);
             final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClass);
             final TypeSpec listener = TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerClass)
                     .addMethod(MethodSpec.methodBuilder("onEvent")
@@ -125,7 +125,8 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
 
     /**
-     * tries to extract from annotation parameter, method parameter, method name
+     * Tries to extract event or request class info from annotation parameter, method parameter or method name
+     * @return a {@link TypeName} object corresponding to the event class
      */
     private TypeName getEventOrRequestClass(ExecutableElement element) {
         try {
@@ -136,9 +137,9 @@ public class AnnotationProcessor extends AbstractProcessor {
             else
                 eventOrRequestClass = element.getAnnotation(Request.class).value(); // if there is no @Event, there must be @Request
 
-            if (eventOrRequestClass != Object.class)
+            if (eventOrRequestClass != Object.class) // Object is default value of annotation parameter, so we check, whether the parameter was explicitly set.
                 return ClassName.get(eventOrRequestClass);
-        } catch (MirroredTypeException mte) { // http://hannesdorfmann.com/annotation-processing/annotationprocessing101/
+        } catch (MirroredTypeException mte) { // http://hannesdorfmann.com/annotation-processing/annotationprocessing101#datamodel
             DeclaredType classTypeMirror = (DeclaredType) mte.getTypeMirror();
             TypeElement classTypeElement = (TypeElement) classTypeMirror.asElement();
             final String qualifiedSuperClassName = classTypeElement.getQualifiedName().toString();

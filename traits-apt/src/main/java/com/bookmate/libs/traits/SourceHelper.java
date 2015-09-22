@@ -21,46 +21,20 @@ import javax.tools.Diagnostic;
  * This class tries to guess the sources dir by the manifest file name and then parses that directory looking for java classes and guesses the package name by path. It works pretty fast (indexing ~500 classes took less than a second).
  */
 class SourceHelper {
-    //    private static Map<String, String> classNameToFullName = new HashMap<>();
-    private static Map<String, TypeElement> classNameToFullName = new HashMap<>();
-//    private static final Map<String, JClass> classes = new HashMap<>();
+    private Map<String, TypeElement> classNameToTypeElement = new HashMap<>();
 
     /**
-     * this helper accumulates classes from each processing round
+     * this helper accumulates classes from each processing round http://hannesdorfmann.com/annotation-processing/annotationprocessing101/#processing-rounds
      */
-    public void init(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv) {
+    public void buildClassesMap(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv) {
         final long startTime = System.currentTimeMillis();
-        for (Element element : roundEnv.getRootElements()) {
-//            classNameToFullName.put(element.getSimpleName().toString(), ((TypeElement) element).getQualifiedName().toString());
-            classNameToFullName.put(element.getSimpleName().toString(), (TypeElement) element);
-//            processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, element.getSimpleName() + " BBBB " + ((TypeElement) element).getQualifiedName());
-        }
-//        final Iterator<File> fileIterator = FileUtils.iterateFiles(srcDir, new String[]{"java"}, true);
-//        while (fileIterator.hasNext()) {
-//            final File file = fileIterator.next();
-//            final String absolutePath = file.getAbsolutePath();
-//            classNameToFullName.put(FilenameUtils.removeExtension(file.getName()), absolutePath.substring(srcPath.length() + 1, absolutePath.length() - 5).replace(File.separatorChar, '.')); // result: com.bookmate.events.IsPublic
-//        }
-//        for (CharSequence charSequence : classNameToFullName.keySet()) {
-//            processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, charSequence + " " + charSequence.equals("PageTurn") + " " + "PageTurn".equals(charSequence.toString()));
-//        }
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Traits source helper processed " + classNameToFullName.size() + " classes in " + (System.currentTimeMillis() - startTime) + " ms");
+        for (Element element : roundEnv.getRootElements())
+            classNameToTypeElement.put(element.getSimpleName().toString(), (TypeElement) element);
+
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Traits source helper processed " + classNameToTypeElement.size() + " classes in " + (System.currentTimeMillis() - startTime) + " ms");
     }
 
     public TypeElement getTypeElement(String simpleName) {
-        return classNameToFullName.get(simpleName);
+        return classNameToTypeElement.get(simpleName);
     }
-//    public static Map<String, String> getClassesFullNameMap(ProcessingEnvironment processingEnv) {
-//        if (classNameToFullName == null)
-//            init(processingEnv);
-//        return classNameToFullName;
-//    }
-
-//    public static JClass getClass(String className) {
-//        return classes.get(className);
-//    }
-//
-//    public static void addClass(String className, JClass jClass) {
-//        classes.put(className, jClass);
-//    }
 }
