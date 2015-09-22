@@ -25,8 +25,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.MirroredTypeException;
 import javax.tools.JavaFileObject;
 
 @SupportedAnnotationTypes("com.bookmate.libs.traits.Event")
@@ -69,15 +67,14 @@ public class AnnotationProcessor extends AbstractProcessor {
             ExecutableElement method = (ExecutableElement) e; // CUR check
             BuildingClass helper = getHelperClass((TypeElement) method.getEnclosingElement());
 
-            final TypeName eventOrRequestClass = getEventOrRequestClass(method); // cur what if null
-            final String eventOrRequestClassName = ((ClassName) eventOrRequestClass).simpleName();
-            final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName) + "Listener" + helper.getListenersCount(eventOrRequestClassName);
-            final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClass);
+            final ClassName eventOrRequestClassName = sourceHelper.getEventOrRequestClassName(method); // cur what if null
+            final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helper.getListenersCount(eventOrRequestClassName.simpleName());
+            final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
             final TypeSpec listener = TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerClass)
                     .addMethod(MethodSpec.methodBuilder("onEvent")
                             .addAnnotation(Override.class)
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(eventOrRequestClass, "event")
+                            .addParameter(eventOrRequestClassName, "event")
                             .addStatement(method.getParameters().size() > 0 ? "$N.$N($N)" : "$N.$N()", BuildingClass.TRAIT_FIELD_NAME, Utils.methodName(method), "event")
                             .build())
                     .build();
@@ -124,40 +121,5 @@ public class AnnotationProcessor extends AbstractProcessor {
         return buildingClass;
     }
 
-    /**
-     * Tries to extract event or request class info from annotation parameter, method parameter or method name
-     * @return a {@link TypeName} object corresponding to the event class
-     */
-    private TypeName getEventOrRequestClass(ExecutableElement element) {
-        try {
-            Class<?> eventOrRequestClass;
-            final Event annotation = element.getAnnotation(Event.class);
-            if (annotation != null)
-                eventOrRequestClass = annotation.value();
-            else
-                eventOrRequestClass = element.getAnnotation(Request.class).value(); // if there is no @Event, there must be @Request
-
-            if (eventOrRequestClass != Object.class) // Object is default value of annotation parameter, so we check, whether the parameter was explicitly set.
-                return ClassName.get(eventOrRequestClass);
-        } catch (MirroredTypeException mte) { // http://hannesdorfmann.com/annotation-processing/annotationprocessing101#datamodel
-            DeclaredType classTypeMirror = (DeclaredType) mte.getTypeMirror();
-            TypeElement classTypeElement = (TypeElement) classTypeMirror.asElement();
-            final String qualifiedSuperClassName = classTypeElement.getQualifiedName().toString();
-            if (!"java.lang.Object".equals(qualifiedSuperClassName))
-                return ClassName.get(classTypeElement);
-        }
-
-        if (element.getParameters().size() > 0)
-            return ClassName.get(element.getParameters().get(0).asType());
-
-        String methodName = Utils.methodName(element); // isPublic
-        methodName = methodName.startsWith("on") ? methodName.substring(2) : methodName;
-        methodName = Utils.toUpperCaseFirstCharacter(methodName);
-        final TypeElement eventOrRequestTypeElement = sourceHelper.getTypeElement(methodName);
-        if (eventOrRequestTypeElement != null)
-            return ClassName.get(eventOrRequestTypeElement);
-
-        return null;
-    }
 
 }
