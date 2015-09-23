@@ -23,7 +23,6 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 
@@ -35,39 +34,15 @@ public class AnnotationProcessor extends AbstractProcessor {
     private final SourceHelper sourceHelper = new SourceHelper();
     private final Map<TypeElement, BuildingClass> helpersMap = new HashMap<>();
 
-    private static class BuildingClass {
-        public static final String TRAIT_FIELD_NAME = "trait";
-
-        final TypeSpec.Builder classBuilder;
-        final MethodSpec.Builder constructorBuilder;
-        /**
-         * how many listeners to this event we already generated in this class
-         */
-        final Map<String, Integer> listenersCountMap = new HashMap<>();
-
-        public BuildingClass(TypeSpec.Builder classBuilder, MethodSpec.Builder constructorBuilder) {
-            this.classBuilder = classBuilder;
-            this.constructorBuilder = constructorBuilder;
-        }
-
-        public String getListenersCount(String eventOrRequestClassName) {
-            Integer listenersCount = listenersCountMap.get(eventOrRequestClassName);
-            if (listenersCount == null)
-                listenersCount = 0;
-            listenersCountMap.put(eventOrRequestClassName, listenersCount + 1);
-            return listenersCount > 0 ? String.valueOf(listenersCount) : "";
-        }
-    }
-
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 //            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA");
         sourceHelper.buildClassesMap(processingEnv, roundEnv);
         for (Element e : roundEnv.getElementsAnnotatedWith(Event.class)) {
-            ExecutableElement method = (ExecutableElement) e; // CUR check
-            BuildingClass helper = getHelperClass((TypeElement) method.getEnclosingElement());
+            ExecutableElement methodElement = (ExecutableElement) e; // CUR check
+            BuildingClass helper = getHelperClass((TypeElement) methodElement.getEnclosingElement());
 
-            final ClassName eventOrRequestClassName = sourceHelper.getEventOrRequestClassName(method); // cur what if null
+            final ClassName eventOrRequestClassName = sourceHelper.getEventOrRequestClassName(methodElement); // cur what if null
             final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helper.getListenersCount(eventOrRequestClassName.simpleName());
             final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
             final TypeSpec listener = TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerClass)
@@ -75,7 +50,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                             .addAnnotation(Override.class)
                             .addModifiers(Modifier.PUBLIC)
                             .addParameter(eventOrRequestClassName, "event")
-                            .addStatement(method.getParameters().size() > 0 ? "$N.$N($N)" : "$N.$N()", BuildingClass.TRAIT_FIELD_NAME, Utils.methodName(method), "event")
+                            .addStatement(methodElement.getParameters().size() > 0 ? "$N.$N($N)" : "$N.$N()", BuildingClass.TRAIT_FIELD_NAME, Utils.extractMethodName(methodElement), "event")
                             .build())
                     .build();
 
@@ -83,21 +58,26 @@ public class AnnotationProcessor extends AbstractProcessor {
             helper.classBuilder.addField(listenerClass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
         }
 
-        for (Map.Entry<TypeElement, BuildingClass> helperEntry : helpersMap.entrySet()) {
-            final String packageName = ((PackageElement) helperEntry.getKey().getEnclosingElement()).getQualifiedName().toString();
-            final BuildingClass helper = helperEntry.getValue();
-
-            final TypeSpec helperClass = helper.classBuilder.addMethod(helper.constructorBuilder.build()).build();
-            JavaFile javaFile = JavaFile.builder(packageName, helperClass).build();
-            try {
-                JavaFileObject jfo = processingEnv.getFiler().createSourceFile(packageName + "." + helperClass.name);
-                final Writer out = jfo.openWriter();
-                javaFile.writeTo(out);
-                out.close();
-            } catch (IOException ignored) {
-            }
-        }
+        buildHelperClasses();
         return true; // no further processing of this annotation type
+    }
+
+    private void buildHelperClasses() {
+        for (Map.Entry<TypeElement, BuildingClass> helperEntry : helpersMap.entrySet())
+            writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()));
+    }
+
+
+    private void writeClassToFile(TypeSpec helperClass, String packageName) {
+        JavaFile javaFile = JavaFile.builder(packageName, helperClass).build();
+
+        try {
+            JavaFileObject jfo = processingEnv.getFiler().createSourceFile(packageName + "." + helperClass.name);
+            final Writer out = jfo.openWriter();
+            javaFile.writeTo(out);
+            out.close();
+        } catch (IOException ignored) { // cur handle io error
+        }
     }
 
     private BuildingClass getHelperClass(TypeElement classElement) {

@@ -8,17 +8,23 @@
 package com.bookmate.libs.traits;
 
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
 
 public class Utils {
-    public static String methodName(ExecutableElement element) {
+    public static String extractMethodName(ExecutableElement element) {
         return element.getSimpleName().toString();
     }
 
-    static String toUpperCaseFirstCharacter(String methodName) {
+    public static String extractPackageName(TypeElement typeElement) {
+        return ((PackageElement) typeElement.getEnclosingElement()).getQualifiedName().toString();
+    }
+
+    public static String toUpperCaseFirstCharacter(String methodName) {
         return methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
     }
 
-    static String toLowerCaseFirstCharacter(String methodName) {
+    public static String toLowerCaseFirstCharacter(String methodName) {
         return methodName.substring(0, 1).toLowerCase() + methodName.substring(1);
     }
 }

@@ -28,6 +28,7 @@ import javax.tools.Diagnostic;
 class SourceHelper {
     private Map<String, TypeElement> classNameToTypeElement = new HashMap<>();
 
+    //region class simple name -> TypeElemenet
     /**
      * this helper accumulates classes from each processing round http://hannesdorfmann.com/annotation-processing/annotationprocessing101/#processing-rounds
      */
@@ -42,7 +43,9 @@ class SourceHelper {
     public TypeElement getTypeElement(String classSimpleName) {
         return classNameToTypeElement.get(classSimpleName);
     }
+    //endregion
 
+    //region get event or request ClassName
     /**
      * Tries to extract event or request class info from annotation parameter, method parameter or method name
      *
@@ -66,11 +69,15 @@ class SourceHelper {
         return getClassNameByMethodName(methodElement);
     }
 
+    /**
+     * onPageShown -> PageShown etc
+     */
     public ClassName getClassNameByMethodName(ExecutableElement methodElement) {
-        String methodName = Utils.methodName(methodElement); // isPublic
-        methodName = methodName.startsWith("on") ? methodName.substring(2) : methodName;
-        methodName = Utils.toUpperCaseFirstCharacter(methodName);
-        final TypeElement eventOrRequestTypeElement = getTypeElement(methodName);
+        String className = Utils.extractMethodName(methodElement); // isPublic
+        className = className.startsWith("on") ? className.substring(2) : className;
+        className = Utils.toUpperCaseFirstCharacter(className);
+
+        final TypeElement eventOrRequestTypeElement = getTypeElement(className);
         if (eventOrRequestTypeElement != null)
             return ClassName.get(eventOrRequestTypeElement);
 
@@ -84,4 +91,5 @@ class SourceHelper {
         else
             return methodElement.getAnnotation(Request.class).value(); // if there is no @Event, there must be @Request
     }
+    //endregion
 }
