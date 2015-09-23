@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.METHOD)
 @SuppressWarnings("UnusedDeclaration")
-public @interface Request {
+public @interface DataRequest {
     Class<?> value() default Object.class;
     String[] moduleName() default "";
     Class<?>[] moduleClass() default Object.class;

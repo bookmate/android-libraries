@@ -90,7 +90,7 @@ class SourceHelper {
         if (annotation != null)
             return annotation.value();
         else
-            return methodElement.getAnnotation(Request.class).value(); // if there is no @Event, there must be @Request
+            return methodElement.getAnnotation(DataRequest.class).value(); // if there is no @Event, there must be @Request
     }
     //endregion
 }

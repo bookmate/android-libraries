@@ -6,23 +6,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Provides type-safe communication between submodules. Consists of event and request systems.
+ * Provides type-safe communication between submodules. Consists of event and request systems. CUR javadoc
  * <p>
  * {@link #event(Object)} is used to notify about some event and to pass some data via it's parameter. There can be any number of listeners of event of certain type
  * <p>
- * {@link #request(Request)} is used to retrieve some data from another submodule. There can be ONLY ONE processor of request of certain type.
+ * {@link #requestData(DataRequest)} is used to retrieve some data from another submodule. There can be ONLY ONE processor of request of certain type.
  */
 @SuppressWarnings("UnusedDeclaration")
 public class Bus {
 
-    private final Map<Class<?>, RequestProcessor> requestProcessors = new HashMap<>();
+    private final Map<Class<?>, DataRequestListener> dataRequestListeners = new HashMap<>();
     private final Map<Class<?>, List<EventListener>> eventListeners = new HashMap<>();
 
     /**
-     * it's better not to call this method directly, but to use {@link com.bookmate.libs.traits.Request} instead
+     * it's better not to call this method directly, but to use {@link com.bookmate.libs.traits.DataRequest} instead
      */
-    public <RESULT, R extends Request<RESULT>> void register(Class<R> requestClass, RequestProcessor<RESULT, R> processor) {
-        requestProcessors.put(requestClass, processor);
+    public <RESULT, R extends DataRequest<RESULT>> void register(Class<R> requestClass, DataRequestListener<RESULT, R> listener) {
+        dataRequestListeners.put(requestClass, listener);
     }
 
     /**
@@ -37,8 +37,8 @@ public class Bus {
         listeners.add(listener);
     }
 
-    public <RESULT, R extends Request<RESULT>> void unregister(Class<R> requestClass) {
-        requestProcessors.remove(requestClass);
+    public <RESULT, R extends DataRequest<RESULT>> void unregister(Class<R> requestClass) {
+        dataRequestListeners.remove(requestClass);
     }
 
     public <E> void unregister(Class<E> eventClass, EventListener<E> listener) {
@@ -50,9 +50,9 @@ public class Bus {
     ///
 
     @SuppressWarnings("unchecked")
-    public <RESULT, R extends Request<RESULT>> RESULT request(R request) {
-        final RequestProcessor<RESULT, R> processor = requestProcessors.get(request.getClass());
-        return processor == null ? request.defaultResult() : processor.process(request);
+    public <RESULT, R extends DataRequest<RESULT>> RESULT requestData(R dataRequest) {
+        final DataRequestListener<RESULT, R> processor = dataRequestListeners.get(dataRequest.getClass());
+        return processor == null ? dataRequest.defaultResult() : processor.process(dataRequest);
     }
 
     @SuppressWarnings("unchecked")
@@ -60,19 +60,19 @@ public class Bus {
         final List<EventListener> listeners = eventListeners.get(event.getClass());
         if (listeners != null)
             for (EventListener listener : listeners)
-                listener.onEvent(event);
+                listener.process(event);
     }
 
     ///
 
-    public abstract static class Request<R> {
+    public abstract static class DataRequest<R> {
         protected R defaultResult() {
             return null;
         }
     }
 
     @SuppressWarnings("WeakerAccess")
-    public abstract static class BooleanRequest extends Request<Boolean> {
+    public abstract static class BooleanRequest extends DataRequest<Boolean> {
 
         @Override
         protected Boolean defaultResult() {
@@ -80,14 +80,14 @@ public class Bus {
         }
     }
 
-    public interface RequestProcessor<RESULT, R extends Request<RESULT>> {
+    public interface DataRequestListener<RESULT, R extends DataRequest<RESULT>> {
         RESULT process(R request);
     }
 
     ///
 
     public interface EventListener<E> {
-        void onEvent(E event);
+        void process(E event);
     }
 
 }

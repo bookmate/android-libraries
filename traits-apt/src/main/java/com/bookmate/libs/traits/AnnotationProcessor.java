@@ -35,7 +35,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         for (Element e : roundEnv.getElementsAnnotatedWith(Event.class))
             addEventListener(e);
 
-        for (Element e : roundEnv.getElementsAnnotatedWith(Request.class))
+        for (Element e : roundEnv.getElementsAnnotatedWith(DataRequest.class))
             addEventListener(e);
 
         buildHelperClasses();
