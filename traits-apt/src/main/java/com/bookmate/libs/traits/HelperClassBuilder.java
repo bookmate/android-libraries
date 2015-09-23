@@ -18,6 +18,7 @@ import java.util.Map;
  */
 class HelperClassBuilder {
     public static final String TRAIT_FIELD_NAME = "trait";
+    public static final String ACCESS_BUS = TRAIT_FIELD_NAME + ".bus";
 
     final TypeSpec.Builder classBuilder;
     final MethodSpec.Builder constructorBuilder;

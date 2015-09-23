@@ -43,16 +43,18 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
 
     protected void addEventListener(Element e) {
-        ExecutableElement methodElement = (ExecutableElement) e; // CUR check
-        HelperClassBuilder helperBuilder = getHelperClass((TypeElement) methodElement.getEnclosingElement());
+        final ExecutableElement methodElement = (ExecutableElement) e; // CUR check
+        final HelperClassBuilder helperBuilder = getHelperClass((TypeElement) methodElement.getEnclosingElement());
 
         final ClassName eventOrRequestClassName = sourceHelper.getEventOrRequestClassName(methodElement); // cur what if null
-        final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestClassName.simpleName());
-        final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
-        final TypeSpec listenerOrProcessor = CodeGenerationHelper.createListenerOrProcessor(methodElement, listenerClass, "onEvent", "event");
+        final String listenerOrProcessorName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestClassName.simpleName());
+        final ParameterizedTypeName listenerOrProcessorClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
+        final TypeSpec listenerOrProcessor = CodeGenerationHelper.createListenerOrProcessor(methodElement, listenerOrProcessorClass, "onEvent", "event");
 
-        helperBuilder.constructorBuilder.addStatement("$N = $L", listenerName, listenerOrProcessor).build();
-        helperBuilder.classBuilder.addField(listenerClass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
+        helperBuilder.constructorBuilder.addStatement("$N = $L", listenerOrProcessorName, listenerOrProcessor).build();
+        helperBuilder.constructorBuilder.addStatement("$N.register($T.class, $N)", HelperClassBuilder.ACCESS_BUS, eventOrRequestClassName, listenerOrProcessorName).build();
+
+        helperBuilder.classBuilder.addField(listenerOrProcessorClass, listenerOrProcessorName, Modifier.PRIVATE, Modifier.FINAL).build();
     }
 
     protected HelperClassBuilder getHelperClass(TypeElement classElement) {
