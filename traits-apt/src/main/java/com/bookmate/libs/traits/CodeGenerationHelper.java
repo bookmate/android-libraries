@@ -42,18 +42,21 @@ public class CodeGenerationHelper {
         return new HelperClassBuilder(helperBuilder, constructorBuilder);
     }
 
-    public static TypeSpec createListenerOrProcessor(ExecutableElement methodElement, ParameterizedTypeName listenerOrProcessorClass, String methodName, String parameterName) {
+    /**
+     * Creates listener anonymous class
+     */
+    public static TypeSpec createListenerClass(ExecutableElement methodElement, ParameterizedTypeName listenerBaseClass, String parameterName) {
         final TypeName methodReturnTypeName = TypeName.get(methodElement.getReturnType());
 
         String methodCode = methodElement.getParameters().size() > 0 ? "$N.$N($N)" : "$N.$N()";
         if (methodReturnTypeName != TypeName.VOID)
             methodCode = "return " + methodCode;
 
-        return TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerOrProcessorClass)
-                    .addMethod(MethodSpec.methodBuilder(methodName)
+        return TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerBaseClass)
+                    .addMethod(MethodSpec.methodBuilder("process")
                             .addAnnotation(Override.class)
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(listenerOrProcessorClass.typeArguments.get(0), parameterName)
+                            .addParameter(listenerBaseClass.typeArguments.get(0), parameterName)
                             .addStatement(methodCode, HelperClassBuilder.TRAIT_FIELD_NAME, Utils.extractMethodName(methodElement), parameterName)
                             .returns(methodReturnTypeName)
                             .build())

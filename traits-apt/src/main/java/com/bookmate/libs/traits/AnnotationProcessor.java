@@ -25,7 +25,10 @@ import javax.lang.model.element.TypeElement;
 @AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor {
 
-    private final SourceHelper sourceHelper = new SourceHelper();
+    private final SourceHelper sourceHelper = new SourceHelper(); // cur SourceUtils, CodeGenerationUtils, make SourceHelper.map static
+    /**
+     * cur why do we need it?
+     */
     private final Map<TypeElement, HelperClassBuilder> helpersMap = new HashMap<>();
 
     @Override
@@ -47,14 +50,14 @@ public class AnnotationProcessor extends AbstractProcessor {
         final HelperClassBuilder helperBuilder = getHelperClass((TypeElement) methodElement.getEnclosingElement());
 
         final ClassName eventOrRequestClassName = sourceHelper.getEventOrRequestClassName(methodElement); // cur what if null
-        final String listenerOrProcessorName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestClassName.simpleName());
-        final ParameterizedTypeName listenerOrProcessorClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
-        final TypeSpec listenerOrProcessor = CodeGenerationHelper.createListenerOrProcessor(methodElement, listenerOrProcessorClass, "onEvent", "event");
+        final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestClassName.simpleName());
+        final ParameterizedTypeName listenerBaseClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
+        final TypeSpec listenerClass = CodeGenerationHelper.createListenerClass(methodElement, listenerBaseClass, "event");
 
-        helperBuilder.constructorBuilder.addStatement("$N = $L", listenerOrProcessorName, listenerOrProcessor).build();
-        helperBuilder.constructorBuilder.addStatement("$N.register($T.class, $N)", HelperClassBuilder.ACCESS_BUS, eventOrRequestClassName, listenerOrProcessorName).build();
+        helperBuilder.constructorBuilder.addStatement("$N = $L", listenerName, listenerClass).build();
+        helperBuilder.constructorBuilder.addStatement("$N.register($T.class, $N)", HelperClassBuilder.ACCESS_BUS, eventOrRequestClassName, listenerName).build();
 
-        helperBuilder.classBuilder.addField(listenerOrProcessorClass, listenerOrProcessorName, Modifier.PRIVATE, Modifier.FINAL).build();
+        helperBuilder.classBuilder.addField(listenerBaseClass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
     }
 
     protected HelperClassBuilder getHelperClass(TypeElement classElement) {
