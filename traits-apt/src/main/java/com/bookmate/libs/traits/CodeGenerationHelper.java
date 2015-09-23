@@ -9,6 +9,7 @@ package com.bookmate.libs.traits;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
@@ -40,6 +42,24 @@ public class CodeGenerationHelper {
         return new HelperClassBuilder(helperBuilder, constructorBuilder);
     }
 
+    public static TypeSpec createListenerOrProcessor(ExecutableElement methodElement, ParameterizedTypeName listenerOrProcessorClass, String methodName, String parameterName) {
+        final TypeName methodReturnTypeName = TypeName.get(methodElement.getReturnType());
+
+        String methodCode = methodElement.getParameters().size() > 0 ? "$N.$N($N)" : "$N.$N()";
+        if (methodReturnTypeName != TypeName.VOID)
+            methodCode = "return " + methodCode;
+
+        return TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerOrProcessorClass)
+                    .addMethod(MethodSpec.methodBuilder(methodName)
+                            .addAnnotation(Override.class)
+                            .addModifiers(Modifier.PUBLIC)
+                            .addParameter(listenerOrProcessorClass.typeArguments.get(0), parameterName)
+                            .addStatement(methodCode, HelperClassBuilder.TRAIT_FIELD_NAME, Utils.extractMethodName(methodElement), parameterName)
+                            .returns(methodReturnTypeName)
+                            .build())
+                    .build();
+    }
+
     public static void writeClassToFile(TypeSpec helperClass, String packageName, ProcessingEnvironment processingEnv) {
         JavaFile javaFile = JavaFile.builder(packageName, helperClass).build();
 
@@ -51,5 +71,4 @@ public class CodeGenerationHelper {
         } catch (IOException ignored) { // cur handle io error
         }
     }
-
 }

@@ -2,7 +2,6 @@ package com.bookmate.libs.traits;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
@@ -33,31 +32,30 @@ public class AnnotationProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 //            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA");
         sourceHelper.buildSourceClassesMap(processingEnv, roundEnv);
-        for (Element e : roundEnv.getElementsAnnotatedWith(Event.class)) {
-            ExecutableElement methodElement = (ExecutableElement) e; // CUR check
-            HelperClassBuilder helper = getHelperClass((TypeElement) methodElement.getEnclosingElement());
+        for (Element e : roundEnv.getElementsAnnotatedWith(Event.class))
+            addEventListener(e);
 
-            final ClassName eventOrRequestClassName = sourceHelper.getEventOrRequestClassName(methodElement); // cur what if null
-            final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helper.getListenersCount(eventOrRequestClassName.simpleName());
-            final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
-            final TypeSpec listener = TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerClass)
-                    .addMethod(MethodSpec.methodBuilder("onEvent")
-                            .addAnnotation(Override.class)
-                            .addModifiers(Modifier.PUBLIC)
-                            .addParameter(eventOrRequestClassName, "event")
-                            .addStatement(methodElement.getParameters().size() > 0 ? "$N.$N($N)" : "$N.$N()", HelperClassBuilder.TRAIT_FIELD_NAME, Utils.extractMethodName(methodElement), "event")
-                            .build())
-                    .build();
-
-            helper.constructorBuilder.addStatement("$N = $L", listenerName, listener).build();
-            helper.classBuilder.addField(listenerClass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
-        }
+        for (Element e : roundEnv.getElementsAnnotatedWith(Request.class))
+            addEventListener(e);
 
         buildHelperClasses();
         return true; // no further processing of this annotation type
     }
 
-    private HelperClassBuilder getHelperClass(TypeElement classElement) {
+    protected void addEventListener(Element e) {
+        ExecutableElement methodElement = (ExecutableElement) e; // CUR check
+        HelperClassBuilder helperBuilder = getHelperClass((TypeElement) methodElement.getEnclosingElement());
+
+        final ClassName eventOrRequestClassName = sourceHelper.getEventOrRequestClassName(methodElement); // cur what if null
+        final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestClassName.simpleName());
+        final ParameterizedTypeName listenerClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
+        final TypeSpec listenerOrProcessor = CodeGenerationHelper.createListenerOrProcessor(methodElement, listenerClass, "onEvent", "event");
+
+        helperBuilder.constructorBuilder.addStatement("$N = $L", listenerName, listenerOrProcessor).build();
+        helperBuilder.classBuilder.addField(listenerClass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
+    }
+
+    protected HelperClassBuilder getHelperClass(TypeElement classElement) {
         HelperClassBuilder helperClassBuilder = helpersMap.get(classElement);
         if (helperClassBuilder != null)
             return helperClassBuilder;
@@ -67,7 +65,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         return helperClassBuilder;
     }
 
-    private void buildHelperClasses() {
+    protected void buildHelperClasses() {
         for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helpersMap.entrySet())
             CodeGenerationHelper.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
     }
