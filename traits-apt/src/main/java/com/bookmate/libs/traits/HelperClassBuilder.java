@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * stores some data needed to build the helper class (constructor builder, type builder etc)
+ * Stores some data needed to build the helper class (constructor builder, type builder etc)
  */
-class BuildingClass {
+class HelperClassBuilder {
     public static final String TRAIT_FIELD_NAME = "trait";
 
     final TypeSpec.Builder classBuilder;
@@ -26,7 +26,7 @@ class BuildingClass {
      */
     final Map<String, Integer> listenersCountMap = new HashMap<>();
 
-    public BuildingClass(TypeSpec.Builder classBuilder, MethodSpec.Builder constructorBuilder) {
+    public HelperClassBuilder(TypeSpec.Builder classBuilder, MethodSpec.Builder constructorBuilder) {
         this.classBuilder = classBuilder;
         this.constructorBuilder = constructorBuilder;
     }

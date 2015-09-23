@@ -30,9 +30,10 @@ class SourceHelper {
 
     //region class simple name -> TypeElemenet
     /**
-     * this helper accumulates classes from each processing round http://hannesdorfmann.com/annotation-processing/annotationprocessing101/#processing-rounds
+     * Accumulates classes from each processing round http://hannesdorfmann.com/annotation-processing/annotationprocessing101/#processing-rounds
+     * This will be later needed for guessing event/request class by method name
      */
-    public void buildClassesMap(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv) {
+    public void buildSourceClassesMap(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv) {
         final long startTime = System.currentTimeMillis();
         for (Element element : roundEnv.getRootElements())
             classNameToTypeElement.put(element.getSimpleName().toString(), (TypeElement) element);
@@ -70,7 +71,7 @@ class SourceHelper {
     }
 
     /**
-     * onPageShown -> PageShown etc
+     * pageShown -> PageShown, onPageShown -> PageShown etc
      */
     public ClassName getClassNameByMethodName(ExecutableElement methodElement) {
         String className = Utils.extractMethodName(methodElement); // isPublic
