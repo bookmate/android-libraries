@@ -10,7 +10,7 @@ import java.util.Map;
  * <p>
  * {@link #event(Object)} is used to notify about some event and to pass some data via it's parameter. There can be any number of listeners of event of certain type
  * <p>
- * {@link #requestData(DataRequest)} is used to retrieve some data from another submodule. There can be ONLY ONE processor of request of certain type.
+ * {@link #requestData(DataRequest)} is used to retrieve some data from another submodule. There can be ONLY ONE listener of request of certain type.
  */
 @SuppressWarnings("UnusedDeclaration")
 public class Bus {

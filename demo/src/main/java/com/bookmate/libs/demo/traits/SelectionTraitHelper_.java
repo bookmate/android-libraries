@@ -16,7 +16,7 @@ public class SelectionTraitHelper_ {
     SelectionTraitHelper_(final SelectionTrait selectionTrait) {
          selectionStartEventListener = new Bus.EventListener<SelectionStart>() {
             @Override
-            public void onEvent(SelectionStart event) {
+            public void process(SelectionStart event) {
                 selectionTrait.onSelectionStart(event);
             }
         };

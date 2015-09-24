@@ -54,6 +54,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         final ParameterizedTypeName listenerBaseClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
         final TypeSpec listenerClass = CodeGenerationHelper.createListenerClass(methodElement, listenerBaseClass, "event");
 
+        helperBuilder.constructorBuilder.addCode("\n"); // to visually separate different event listeners
         helperBuilder.constructorBuilder.addStatement("$N = $L", listenerName, listenerClass).build();
         helperBuilder.constructorBuilder.addStatement("$N.register($T.class, $N)", HelperClassBuilder.ACCESS_BUS, eventOrRequestClassName, listenerName).build();
 
