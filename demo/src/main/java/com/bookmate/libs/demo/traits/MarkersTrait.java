@@ -38,17 +38,22 @@ public class MarkersTrait extends BookmateReaderTrait {
 //    }
 
     @DataRequest
-    boolean getTappedMarkerColor(GetTappedMarkerColor request) {
-        return false;
+    int getTappedMarkerColor(GetTappedMarkerColor request) {
+        return 0;
     }
 
     @DataRequest
-    boolean getTappedMarkerColor() {
-        return false;
+    Integer getTappedMarkerColor() {
+        return 1;
     }
 
     @DataRequest(GetTappedMarkerColor.class)
-    boolean tappedMarkerColor() {
-        return false;
+    int tappedMarkerColor() {
+        return 2;
     }
+
+//    @DataRequest cur test incorrect
+//    Document tappedMarkerColor(GetTappedMarkerColor request) {
+//        return null;
+//    }
 }

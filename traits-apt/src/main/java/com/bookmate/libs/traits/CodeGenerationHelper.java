@@ -7,6 +7,7 @@
  */
 package com.bookmate.libs.traits;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -43,24 +44,41 @@ public class CodeGenerationHelper {
     }
 
     /**
-     * Creates listener anonymous class
+     * Creates listener anonymous class. Event and DataRequest listeners code generation has very much in common, so I use this not very elegant code here
      */
-    public static TypeSpec createListenerClass(ExecutableElement methodElement, ParameterizedTypeName listenerBaseClass, String parameterName) {
-        final TypeName methodReturnTypeName = TypeName.get(methodElement.getReturnType());
+    public static TypeSpec createListenerClass(ExecutableElement methodElement, ClassName eventOrRequestClassName) {
+        final TypeName methodReturnTypeName = extractMethodReturnTypeName(methodElement);
 
+        final boolean isRequest = methodElement.getAnnotation(DataRequest.class) != null;
+        String parameterName = isRequest ? "request" : "event";
+
+        return TypeSpec.anonymousClassBuilder("").superclass(getListenerBaseClass(eventOrRequestClassName, methodReturnTypeName, isRequest))
+                .addMethod(MethodSpec.methodBuilder("process")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addParameter(eventOrRequestClassName, parameterName)
+                        .addStatement(createListenerMethodCode(methodElement, methodReturnTypeName), HelperClassBuilder.TRAIT_FIELD_NAME, Utils.extractMethodName(methodElement), parameterName)
+                        .returns(methodReturnTypeName)
+                        .build())
+                .build();
+    }
+
+    protected static TypeName extractMethodReturnTypeName(ExecutableElement methodElement) {
+        final TypeName typeName = TypeName.get(methodElement.getReturnType());
+        return typeName == TypeName.VOID ? typeName : typeName.box(); // needed to make int -> Integer, but leave void as is
+    }
+
+    protected static ParameterizedTypeName getListenerBaseClass(ClassName eventOrRequestClassName, TypeName methodReturnTypeName, boolean isRequest) {
+        if (!isRequest)
+            return ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
+        return ParameterizedTypeName.get(ClassName.get(Bus.DataRequestListener.class), methodReturnTypeName, eventOrRequestClassName); // cur check situation like Bus.DataRequestListener<Document, GetTappedMarkerColor>
+    }
+
+    protected static String createListenerMethodCode(ExecutableElement methodElement, TypeName methodReturnTypeName) {
         String methodCode = methodElement.getParameters().size() > 0 ? "$N.$N($N)" : "$N.$N()";
         if (methodReturnTypeName != TypeName.VOID)
             methodCode = "return " + methodCode;
-
-        return TypeSpec.anonymousClassBuilder("").addSuperinterface(listenerBaseClass)
-                    .addMethod(MethodSpec.methodBuilder("process")
-                            .addAnnotation(Override.class)
-                            .addModifiers(Modifier.PUBLIC)
-                            .addParameter(listenerBaseClass.typeArguments.get(0), parameterName)
-                            .addStatement(methodCode, HelperClassBuilder.TRAIT_FIELD_NAME, Utils.extractMethodName(methodElement), parameterName)
-                            .returns(methodReturnTypeName)
-                            .build())
-                    .build();
+        return methodCode;
     }
 
     public static void writeClassToFile(TypeSpec helperClass, String packageName, ProcessingEnvironment processingEnv) {

@@ -2,7 +2,6 @@ package com.bookmate.libs.traits;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.HashMap;
@@ -35,30 +34,31 @@ public class AnnotationProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 //            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA");
         sourceHelper.buildSourceClassesMap(processingEnv, roundEnv);
+
         for (Element e : roundEnv.getElementsAnnotatedWith(Event.class))
-            addEventListener(e);
+            addEventOrRequestListener(e);
 
         for (Element e : roundEnv.getElementsAnnotatedWith(DataRequest.class))
-            addEventListener(e);
+            addEventOrRequestListener(e);
 
-        buildHelperClasses();
+        for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helpersMap.entrySet()) // build helper classes
+            CodeGenerationHelper.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
         return true; // no further processing of this annotation type
     }
 
-    protected void addEventListener(Element e) {
+    protected void addEventOrRequestListener(Element e) {
         final ExecutableElement methodElement = (ExecutableElement) e; // CUR check
         final HelperClassBuilder helperBuilder = getHelperClass((TypeElement) methodElement.getEnclosingElement());
 
         final ClassName eventOrRequestClassName = sourceHelper.getEventOrRequestClassName(methodElement); // cur what if null
         final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestClassName.simpleName());
-        final ParameterizedTypeName listenerBaseClass = ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestClassName);
-        final TypeSpec listenerClass = CodeGenerationHelper.createListenerClass(methodElement, listenerBaseClass, "event");
+        final TypeSpec listenerClass = CodeGenerationHelper.createListenerClass(methodElement, eventOrRequestClassName);
 
         helperBuilder.constructorBuilder.addCode("\n"); // to visually separate different event listeners
         helperBuilder.constructorBuilder.addStatement("$N = $L", listenerName, listenerClass).build();
         helperBuilder.constructorBuilder.addStatement("$N.register($T.class, $N)", HelperClassBuilder.ACCESS_BUS, eventOrRequestClassName, listenerName).build();
 
-        helperBuilder.classBuilder.addField(listenerBaseClass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
+        helperBuilder.classBuilder.addField(listenerClass.superclass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
     }
 
     protected HelperClassBuilder getHelperClass(TypeElement classElement) {
@@ -69,11 +69,6 @@ public class AnnotationProcessor extends AbstractProcessor {
         helperClassBuilder = CodeGenerationHelper.createHelperClassBuilder(classElement);
         helpersMap.put(classElement, helperClassBuilder);
         return helperClassBuilder;
-    }
-
-    protected void buildHelperClasses() {
-        for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helpersMap.entrySet())
-            CodeGenerationHelper.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
     }
 
 }
