@@ -64,7 +64,7 @@ public class CodeGenerationHelper {
     }
 
     public static void writeClassToFile(TypeSpec helperClass, String packageName, ProcessingEnvironment processingEnv) {
-        JavaFile javaFile = JavaFile.builder(packageName, helperClass).build();
+        JavaFile javaFile = JavaFile.builder(packageName, helperClass).indent("    ").build();
 
         try {
             JavaFileObject jfo = processingEnv.getFiler().createSourceFile(packageName + "." + helperClass.name);
