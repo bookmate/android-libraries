@@ -89,4 +89,8 @@ public class SourceUtils {
             return methodElement.getAnnotation(DataRequest.class).value(); // if there is no @Event, there must be @DataRequest
     }
     //endregion
+
+    public static boolean isRequest(Element methodElement) {
+        return methodElement.getAnnotation(DataRequest.class) != null;
+    }
 }

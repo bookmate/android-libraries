@@ -17,6 +17,7 @@ import org.androidannotations.annotations.EBean;
 
 @EBean
 public class MarkersTrait extends BookmateReaderTrait {
+
     @Event(PageTurn.class)
     void pageTurned() {
     }

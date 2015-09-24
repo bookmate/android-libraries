@@ -49,7 +49,7 @@ public class CodeGenerationUtils {
     public static TypeSpec createListenerClass(ExecutableElement methodElement, ClassName eventOrRequestClassName) {
         final TypeName methodReturnTypeName = extractMethodReturnTypeName(methodElement);
 
-        final boolean isRequest = methodElement.getAnnotation(DataRequest.class) != null;
+        final boolean isRequest = SourceUtils.isRequest(methodElement);
         String parameterName = isRequest ? "request" : "event";
 
         return TypeSpec.anonymousClassBuilder("").superclass(getListenerBaseClass(eventOrRequestClassName, methodReturnTypeName, isRequest))

@@ -18,6 +18,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 
 @SupportedAnnotationTypes("com.bookmate.libs.traits.Event")
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
@@ -31,22 +32,24 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-//            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA");
         SourceUtils.buildSourceClassesMap(processingEnv, roundEnv);
 
-        for (Element e : roundEnv.getElementsAnnotatedWith(Event.class))
-            addEventOrRequestListener(e);
+        try {
+            for (Element e : roundEnv.getElementsAnnotatedWith(Event.class))
+                addEventOrRequestListener((ExecutableElement) e); // only methods can be annotated with @Event, so no need to check the cast here
 
-        for (Element e : roundEnv.getElementsAnnotatedWith(DataRequest.class))
-            addEventOrRequestListener(e);
+            for (Element e : roundEnv.getElementsAnnotatedWith(DataRequest.class))
+                addEventOrRequestListener((ExecutableElement) e);
 
-        for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helperBuildersMap.entrySet()) // build helper classes
-            CodeGenerationUtils.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
+            for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helperBuildersMap.entrySet()) // build helper classes
+                CodeGenerationUtils.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
+        } catch (IllegalArgumentException e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+        }
         return true; // no further processing of this annotation type
     }
 
-    protected void addEventOrRequestListener(Element e) {
-        final ExecutableElement methodElement = (ExecutableElement) e; // CUR check
+    protected void addEventOrRequestListener(ExecutableElement methodElement) {
         final HelperClassBuilder helperBuilder = getHelperClassBuilder((TypeElement) methodElement.getEnclosingElement());
 
         final ClassName eventOrRequestClassName = SourceUtils.getEventOrRequestClassName(methodElement); // cur what if null
