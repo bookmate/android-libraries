@@ -27,4 +27,8 @@ public class Utils {
     public static String toLowerCaseFirstCharacter(String methodName) {
         return methodName.substring(0, 1).toLowerCase() + methodName.substring(1);
     }
+
+    public static String extractMethodSignature(ExecutableElement methodElement) {
+        return ((TypeElement) methodElement.getEnclosingElement()).getQualifiedName() + "." + methodElement.getSimpleName() + "()";
+    }
 }

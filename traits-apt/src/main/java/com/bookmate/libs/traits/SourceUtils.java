@@ -25,6 +25,7 @@ public class SourceUtils {
     protected static Map<String, TypeElement> classNameToTypeElement = new HashMap<>();
 
     //region class simple name -> TypeElement
+
     /**
      * Accumulates classes from each processing round http://hannesdorfmann.com/annotation-processing/annotationprocessing101/#processing-rounds
      * This will be later needed for guessing event/request class by method name
@@ -43,10 +44,12 @@ public class SourceUtils {
     //endregion
 
     //region get event or request ClassName
+
     /**
      * Tries to extract event or request class info from annotation parameter, method parameter or method name
      *
      * @return a {@link ClassName} object corresponding to the event class
+     * @throws IllegalArgumentException if can't find the class
      */
     public static ClassName getEventOrRequestClassName(ExecutableElement methodElement) {
         try {
@@ -68,6 +71,7 @@ public class SourceUtils {
 
     /**
      * pageShown -> PageShown, onPageShown -> PageShown etc
+     * @throws IllegalArgumentException if can't find the class
      */
     public static ClassName getClassNameByMethodName(ExecutableElement methodElement) {
         String className = Utils.extractMethodName(methodElement); // isPublic
@@ -78,7 +82,7 @@ public class SourceUtils {
         if (eventOrRequestTypeElement != null)
             return ClassName.get(eventOrRequestTypeElement);
 
-        return null;
+        throw new IllegalArgumentException("can't guess event or request class name by method name. Best guess: " + className);
     }
 
     public static Class<?> getEventOrRequestClassFromAnnotation(ExecutableElement methodElement) throws MirroredTypeException {

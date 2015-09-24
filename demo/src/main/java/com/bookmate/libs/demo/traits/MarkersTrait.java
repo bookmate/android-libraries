@@ -38,6 +38,11 @@ public class MarkersTrait extends BookmateReaderTrait {
 //    void pageTurn(List<String> event) {
 //    }
 
+    @Event
+    void error1() {
+
+    }
+
     @DataRequest
     int getTappedMarkerColor(GetTappedMarkerColor request) {
         return 0;

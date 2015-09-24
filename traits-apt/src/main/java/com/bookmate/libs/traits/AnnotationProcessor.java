@@ -34,25 +34,29 @@ public class AnnotationProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         SourceUtils.buildSourceClassesMap(processingEnv, roundEnv);
 
-        try {
-            for (Element e : roundEnv.getElementsAnnotatedWith(Event.class))
-                addEventOrRequestListener((ExecutableElement) e); // only methods can be annotated with @Event, so no need to check the cast here
+        for (Element e : roundEnv.getElementsAnnotatedWith(Event.class))
+            processElement(e);
 
-            for (Element e : roundEnv.getElementsAnnotatedWith(DataRequest.class))
-                addEventOrRequestListener((ExecutableElement) e);
+        for (Element e : roundEnv.getElementsAnnotatedWith(DataRequest.class))
+            processElement(e);
 
-            for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helperBuildersMap.entrySet()) // build helper classes
-                CodeGenerationUtils.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
-        } catch (IllegalArgumentException e) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-        }
+        for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helperBuildersMap.entrySet()) // build helper classes
+            CodeGenerationUtils.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
         return true; // no further processing of this annotation type
+    }
+
+    protected void processElement(Element element) {
+        try {
+            addEventOrRequestListener((ExecutableElement) element); // only methods can be annotated with @Event, so no need to check the cast here
+        } catch (IllegalArgumentException e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Error processing " + Utils.extractMethodSignature((ExecutableElement) element) + ": " + e.getMessage());
+        }
     }
 
     protected void addEventOrRequestListener(ExecutableElement methodElement) {
         final HelperClassBuilder helperBuilder = getHelperClassBuilder((TypeElement) methodElement.getEnclosingElement());
 
-        final ClassName eventOrRequestClassName = SourceUtils.getEventOrRequestClassName(methodElement); // cur what if null
+        final ClassName eventOrRequestClassName = SourceUtils.getEventOrRequestClassName(methodElement);
         final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestClassName.simpleName());
         final TypeSpec listenerClass = CodeGenerationUtils.createListenerClass(methodElement, eventOrRequestClassName);
 
