@@ -24,16 +24,15 @@ import javax.lang.model.element.TypeElement;
 @AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor {
 
-    private final SourceHelper sourceHelper = new SourceHelper(); // cur SourceUtils, CodeGenerationUtils, make SourceHelper.map static
     /**
-     * cur why do we need it?
+     * we process annotations one by one, so we need to create helper builder once for each type and then store it for later access
      */
-    private final Map<TypeElement, HelperClassBuilder> helpersMap = new HashMap<>();
+    private final Map<TypeElement, HelperClassBuilder> helperBuildersMap = new HashMap<>();
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 //            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "AAAA");
-        sourceHelper.buildSourceClassesMap(processingEnv, roundEnv);
+        SourceUtils.buildSourceClassesMap(processingEnv, roundEnv);
 
         for (Element e : roundEnv.getElementsAnnotatedWith(Event.class))
             addEventOrRequestListener(e);
@@ -41,18 +40,18 @@ public class AnnotationProcessor extends AbstractProcessor {
         for (Element e : roundEnv.getElementsAnnotatedWith(DataRequest.class))
             addEventOrRequestListener(e);
 
-        for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helpersMap.entrySet()) // build helper classes
-            CodeGenerationHelper.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
+        for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helperBuildersMap.entrySet()) // build helper classes
+            CodeGenerationUtils.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
         return true; // no further processing of this annotation type
     }
 
     protected void addEventOrRequestListener(Element e) {
         final ExecutableElement methodElement = (ExecutableElement) e; // CUR check
-        final HelperClassBuilder helperBuilder = getHelperClass((TypeElement) methodElement.getEnclosingElement());
+        final HelperClassBuilder helperBuilder = getHelperClassBuilder((TypeElement) methodElement.getEnclosingElement());
 
-        final ClassName eventOrRequestClassName = sourceHelper.getEventOrRequestClassName(methodElement); // cur what if null
+        final ClassName eventOrRequestClassName = SourceUtils.getEventOrRequestClassName(methodElement); // cur what if null
         final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestClassName.simpleName());
-        final TypeSpec listenerClass = CodeGenerationHelper.createListenerClass(methodElement, eventOrRequestClassName);
+        final TypeSpec listenerClass = CodeGenerationUtils.createListenerClass(methodElement, eventOrRequestClassName);
 
         helperBuilder.constructorBuilder.addCode("\n"); // to visually separate different event listeners
         helperBuilder.constructorBuilder.addStatement("$N = $L", listenerName, listenerClass).build();
@@ -61,13 +60,16 @@ public class AnnotationProcessor extends AbstractProcessor {
         helperBuilder.classBuilder.addField(listenerClass.superclass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
     }
 
-    protected HelperClassBuilder getHelperClass(TypeElement classElement) {
-        HelperClassBuilder helperClassBuilder = helpersMap.get(classElement);
+    /**
+     * Creates {@link HelperClassBuilder} or retrieves stored one from cache
+     */
+    protected HelperClassBuilder getHelperClassBuilder(TypeElement classElement) {
+        HelperClassBuilder helperClassBuilder = helperBuildersMap.get(classElement);
         if (helperClassBuilder != null)
             return helperClassBuilder;
 
-        helperClassBuilder = CodeGenerationHelper.createHelperClassBuilder(classElement);
-        helpersMap.put(classElement, helperClassBuilder);
+        helperClassBuilder = CodeGenerationUtils.createHelperClassBuilder(classElement);
+        helperBuildersMap.put(classElement, helperClassBuilder);
         return helperClassBuilder;
     }
 

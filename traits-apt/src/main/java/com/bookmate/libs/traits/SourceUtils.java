@@ -21,19 +21,15 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
 import javax.tools.Diagnostic;
 
-/**
- * Needed to guess class package by name. The problem is that when we write @Event void onMyEvent(), the event class name is MyEvent, but we can't know the package.
- * This class tries to guess the sources dir by the manifest file name and then parses that directory looking for java classes and guesses the package name by path. It works pretty fast (indexing ~500 classes took less than a second).
- */
-class SourceHelper {
-    private Map<String, TypeElement> classNameToTypeElement = new HashMap<>();
+public class SourceUtils {
+    protected static Map<String, TypeElement> classNameToTypeElement = new HashMap<>();
 
-    //region class simple name -> TypeElemenet
+    //region class simple name -> TypeElement
     /**
      * Accumulates classes from each processing round http://hannesdorfmann.com/annotation-processing/annotationprocessing101/#processing-rounds
      * This will be later needed for guessing event/request class by method name
      */
-    public void buildSourceClassesMap(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv) {
+    public static void buildSourceClassesMap(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv) {
         final long startTime = System.currentTimeMillis();
         for (Element element : roundEnv.getRootElements())
             classNameToTypeElement.put(element.getSimpleName().toString(), (TypeElement) element);
@@ -41,7 +37,7 @@ class SourceHelper {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Traits source helper processed " + classNameToTypeElement.size() + " classes in " + (System.currentTimeMillis() - startTime) + " ms");
     }
 
-    public TypeElement getTypeElement(String classSimpleName) {
+    public static TypeElement getTypeElement(String classSimpleName) {
         return classNameToTypeElement.get(classSimpleName);
     }
     //endregion
@@ -52,7 +48,7 @@ class SourceHelper {
      *
      * @return a {@link ClassName} object corresponding to the event class
      */
-    public ClassName getEventOrRequestClassName(ExecutableElement methodElement) {
+    public static ClassName getEventOrRequestClassName(ExecutableElement methodElement) {
         try {
             Class<?> eventOrRequestClass = getEventOrRequestClassFromAnnotation(methodElement);
 
@@ -73,7 +69,7 @@ class SourceHelper {
     /**
      * pageShown -> PageShown, onPageShown -> PageShown etc
      */
-    public ClassName getClassNameByMethodName(ExecutableElement methodElement) {
+    public static ClassName getClassNameByMethodName(ExecutableElement methodElement) {
         String className = Utils.extractMethodName(methodElement); // isPublic
         className = className.startsWith("on") ? className.substring(2) : className;
         className = Utils.toUpperCaseFirstCharacter(className);
