@@ -57,7 +57,7 @@ public class CodeGenerationUtils {
                         .addAnnotation(Override.class)
                         .addModifiers(Modifier.PUBLIC)
                         .addParameter(eventOrRequestClassName, parameterName)
-                        .addStatement(createListenerMethodCode(methodElement, methodReturnTypeName), HelperClassBuilder.TRAIT_FIELD_NAME, Utils.extractMethodName(methodElement), parameterName)
+                        .addStatement(createListenerMethodCode(methodElement, eventOrRequestClassName, methodReturnTypeName), HelperClassBuilder.TRAIT_FIELD_NAME, Utils.extractMethodName(methodElement), parameterName)
                         .returns(methodReturnTypeName)
                         .build())
                 .build();
@@ -74,11 +74,31 @@ public class CodeGenerationUtils {
         return ParameterizedTypeName.get(ClassName.get(Bus.DataRequestListener.class), methodReturnTypeName, eventOrRequestClassName); // cur check situation like Bus.DataRequestListener<Document, GetTappedMarkerColor>
     }
 
-    protected static String createListenerMethodCode(ExecutableElement methodElement, TypeName methodReturnTypeName) {
+    /**
+     * @throws IllegalArgumentException if method parameters are incorrect (more than one parameter or unsuitable type)
+     */
+    protected static String createListenerMethodCode(ExecutableElement methodElement, ClassName eventOrRequestClassName, TypeName methodReturnTypeName) {
+        checkMethodParameters(methodElement, eventOrRequestClassName);
+
         String methodCode = methodElement.getParameters().size() > 0 ? "$N.$N($N)" : "$N.$N()";
         if (methodReturnTypeName != TypeName.VOID)
             methodCode = "return " + methodCode;
         return methodCode;
+    }
+
+    /**
+     * @throws IllegalArgumentException if method parameters are incorrect (more than one parameter or unsuitable type)
+     */
+    protected static void checkMethodParameters(ExecutableElement methodElement, ClassName eventOrRequestClassName) {
+        if (methodElement.getParameters().size() > 1)
+            throw new IllegalArgumentException("Methods annotated with " + Utils.getAnnotationNameString(methodElement) + " must have 0 or 1 parameters");
+
+        // parameter type if present must equal event or request type
+        if (methodElement.getParameters().size() > 0) {
+            final TypeName parameterTypeName = ClassName.get(methodElement.getParameters().get(0).asType());
+            if (!eventOrRequestClassName.equals(parameterTypeName))
+                throw new IllegalArgumentException("Method parameter type should be " + eventOrRequestClassName + " Now it's " + parameterTypeName);
+        }
     }
 
     public static void writeClassToFile(TypeSpec helperClass, String packageName, ProcessingEnvironment processingEnv) {
