@@ -7,6 +7,7 @@
  */
 package com.bookmate.libs.traits;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
@@ -28,4 +29,11 @@ public class Utils {
         return methodName.substring(0, 1).toLowerCase() + methodName.substring(1);
     }
 
+    public static String getAnnotationNameString(ExecutableElement methodElement) {
+        return "@" + (isRequest(methodElement) ? DataRequest.class.getSimpleName() : Event.class.getSimpleName());
+    }
+
+    public static boolean isRequest(Element methodElement) {
+        return methodElement.getAnnotation(DataRequest.class) != null;
+    }
 }

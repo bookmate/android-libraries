@@ -15,6 +15,8 @@ import com.bookmate.libs.traits.Event;
 
 import org.androidannotations.annotations.EBean;
 
+import java.util.List;
+
 @EBean
 public class MarkersTrait extends BookmateReaderTrait {
 
@@ -31,17 +33,16 @@ public class MarkersTrait extends BookmateReaderTrait {
     }
 
     @Event
-    void onPageTurned(PageTurn event) {
+    void badParameterError(int event) {
     }
-
-//    @Event cur test incorrect
-//    void pageTurn(List<String> event) {
-//    }
 
     @Event
-    void error1() {
-
+    void badParameterError(List<String> event) {
     }
+//    @Event
+//    void badEventError() {
+//
+//    }
 
     @DataRequest
     int getTappedMarkerColor(GetTappedMarkerColor request) {

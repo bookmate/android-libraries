@@ -64,16 +64,27 @@ public class SourceUtils {
         }
 
         if (methodElement.getParameters().size() > 0)
-            return (ClassName) ClassName.get(methodElement.getParameters().get(0).asType()); // CUR check types here List<String>
+            return getClassNameByMethodParameter(methodElement);
 
         return getClassNameByMethodName(methodElement);
+    }
+
+    /**
+     * @throws IllegalArgumentException if parameter type isn't a class (for instance List&lt;String&gt;)
+     */
+    protected static ClassName getClassNameByMethodParameter(ExecutableElement methodElement) {
+        try {
+            return (ClassName) ClassName.get(methodElement.getParameters().get(0).asType());
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Parameter of method annotated with " + Utils.getAnnotationNameString(methodElement) + " must be of a Class type only");
+        }
     }
 
     /**
      * pageShown -> PageShown, onPageShown -> PageShown etc
      * @throws IllegalArgumentException if can't find the class
      */
-    public static ClassName getClassNameByMethodName(ExecutableElement methodElement) {
+    protected static ClassName getClassNameByMethodName(ExecutableElement methodElement) {
         String className = Utils.extractMethodName(methodElement); // isPublic
         className = className.startsWith("on") ? className.substring(2) : className;
         className = Utils.toUpperCaseFirstCharacter(className);
@@ -85,7 +96,7 @@ public class SourceUtils {
         throw new IllegalArgumentException("Can't guess event or request class name by method name. Best guess: " + className);
     }
 
-    public static Class<?> getEventOrRequestClassFromAnnotation(ExecutableElement methodElement) throws MirroredTypeException {
+    protected static Class<?> getEventOrRequestClassFromAnnotation(ExecutableElement methodElement) throws MirroredTypeException {
         final Event annotation = methodElement.getAnnotation(Event.class);
         if (annotation != null)
             return annotation.value();
@@ -94,7 +105,4 @@ public class SourceUtils {
     }
     //endregion
 
-    public static boolean isRequest(Element methodElement) {
-        return methodElement.getAnnotation(DataRequest.class) != null;
-    }
 }
