@@ -49,7 +49,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         try {
             addEventOrRequestListener((ExecutableElement) element); // only methods can be annotated with @Event, so no need to check the cast here
         } catch (IllegalArgumentException e) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Error processing " + Utils.extractMethodSignature((ExecutableElement) element) + ": " + e.getMessage());
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage(), element);
         }
     }
 

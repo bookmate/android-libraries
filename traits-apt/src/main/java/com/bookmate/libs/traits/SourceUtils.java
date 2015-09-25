@@ -82,7 +82,7 @@ public class SourceUtils {
         if (eventOrRequestTypeElement != null)
             return ClassName.get(eventOrRequestTypeElement);
 
-        throw new IllegalArgumentException("can't guess event or request class name by method name. Best guess: " + className);
+        throw new IllegalArgumentException("Can't guess event or request class name by method name. Best guess: " + className);
     }
 
     public static Class<?> getEventOrRequestClassFromAnnotation(ExecutableElement methodElement) throws MirroredTypeException {
