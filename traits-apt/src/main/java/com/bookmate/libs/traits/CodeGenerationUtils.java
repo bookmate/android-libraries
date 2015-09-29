@@ -20,6 +20,7 @@ import java.io.Writer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 public class CodeGenerationUtils {
@@ -92,7 +93,8 @@ public class CodeGenerationUtils {
             final Writer out = jfo.openWriter();
             javaFile.writeTo(out);
             out.close();
-        } catch (IOException ignored) { // cur handle io error
+        } catch (IOException ignored) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "I/O error: couldn't write " + packageName + "." + helperClass.name + " class to file");
         }
     }
 }
