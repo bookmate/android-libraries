@@ -42,6 +42,7 @@ public class CodeGenerationUtils {
         return new HelperClassBuilder(helperBuilder, constructorBuilder);
     }
 
+    //region Listener class
     /**
      * Creates listener anonymous class. Event and DataRequest listeners code generation has very much in common, so I use this not very elegant code here
      */
@@ -64,6 +65,13 @@ public class CodeGenerationUtils {
         if (!isRequest)
             return ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestMethod.eventOrRequestClassName);
         return ParameterizedTypeName.get(ClassName.get(Bus.DataRequestListener.class), eventOrRequestMethod.returnTypeName, eventOrRequestMethod.eventOrRequestClassName); // cur check situation like Bus.DataRequestListener<Document, GetTappedMarkerColor>
+    }
+    //endregion
+
+    public static void initializeListenerInConstructor(MethodSpec.Builder constructorBuilder, EventOrRequestMethod eventOrRequestMethod, String listenerName, TypeSpec listenerClass) {
+        constructorBuilder.addCode("\n"); // to visually separate different event listeners
+        constructorBuilder.addStatement("$N = $L", listenerName, listenerClass).build();
+        constructorBuilder.addStatement("$N.register($T.class, $N)", HelperClassBuilder.ACCESS_BUS, eventOrRequestMethod.eventOrRequestClassName, listenerName).build();
     }
 
     /**

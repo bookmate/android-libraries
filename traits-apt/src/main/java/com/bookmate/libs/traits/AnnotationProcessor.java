@@ -59,15 +59,9 @@ public class AnnotationProcessor extends AbstractProcessor {
         final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestMethod.eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestMethod.eventOrRequestClassName.simpleName());
         final TypeSpec listenerClass = CodeGenerationUtils.createListenerClass(eventOrRequestMethod);
 
-        initializeListenerInConstructor(helperBuilder, eventOrRequestMethod, listenerName, listenerClass);
+        CodeGenerationUtils.initializeListenerInConstructor(helperBuilder.constructorBuilder, eventOrRequestMethod, listenerName, listenerClass);
 
         helperBuilder.classBuilder.addField(listenerClass.superclass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
-    }
-
-    protected void initializeListenerInConstructor(HelperClassBuilder helperBuilder, EventOrRequestMethod eventOrRequestMethod, String listenerName, TypeSpec listenerClass) {
-        helperBuilder.constructorBuilder.addCode("\n"); // to visually separate different event listeners
-        helperBuilder.constructorBuilder.addStatement("$N = $L", listenerName, listenerClass).build();
-        helperBuilder.constructorBuilder.addStatement("$N.register($T.class, $N)", HelperClassBuilder.ACCESS_BUS, eventOrRequestMethod.eventOrRequestClassName, listenerName).build();
     }
 
     /**
