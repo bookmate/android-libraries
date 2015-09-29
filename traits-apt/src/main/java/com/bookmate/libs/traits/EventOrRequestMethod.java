@@ -20,15 +20,18 @@ public class EventOrRequestMethod {
     public EventOrRequestMethod(ExecutableElement methodElement) {
         element = methodElement;
         eventOrRequestClassName = SourceUtils.getEventOrRequestClassName(methodElement);
-        checkMethodParameters();
-
         returnTypeName = extractMethodReturnTypeName(methodElement);
+
+        assertMethodIsCorrect();
     }
 
     /**
-     * @throws IllegalArgumentException if method parameters are incorrect (more than one parameter or unsuitable type)
+     * @throws IllegalArgumentException if method is private or method parameters are incorrect (more than one parameter or unsuitable type)
      */
-    protected void checkMethodParameters() {
+    protected void assertMethodIsCorrect() {
+        if (element.getModifiers().contains(javax.lang.model.element.Modifier.PRIVATE))
+            throw new IllegalArgumentException("Methods annotated with " + Utils.getAnnotationNameString(element) + " mustn't be private");
+
         if (element.getParameters().size() > 1)
             throw new IllegalArgumentException("Methods annotated with " + Utils.getAnnotationNameString(element) + " must have 0 or 1 parameters");
 

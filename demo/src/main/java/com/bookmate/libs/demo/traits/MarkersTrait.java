@@ -30,10 +30,10 @@ public class MarkersTrait extends BookmateReaderTrait {
     void pageTurn() {
     }
 
-    @Event(PageTurn.class) // CUR private method error
-    private void privateMethodError() {
-
-    }
+//    @Event(PageTurn.class)
+//    private void privateMethodError() {
+//
+//    }
 
 //    @Event
 //    void badEventClassError() {
