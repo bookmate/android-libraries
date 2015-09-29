@@ -1,7 +1,6 @@
 package com.bookmate.libs.traits;
 
 import com.google.auto.service.AutoService;
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.HashMap;
@@ -56,15 +55,19 @@ public class AnnotationProcessor extends AbstractProcessor {
     protected void addEventOrRequestListener(ExecutableElement methodElement) {
         final HelperClassBuilder helperBuilder = getHelperClassBuilder((TypeElement) methodElement.getEnclosingElement());
 
-        final ClassName eventOrRequestClassName = SourceUtils.getEventOrRequestClassName(methodElement);
-        final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestClassName.simpleName());
-        final TypeSpec listenerClass = CodeGenerationUtils.createListenerClass(methodElement, eventOrRequestClassName);
+        final EventOrRequestMethod eventOrRequestMethod = new EventOrRequestMethod(methodElement);
+        final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestMethod.eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestMethod.eventOrRequestClassName.simpleName());
+        final TypeSpec listenerClass = CodeGenerationUtils.createListenerClass(eventOrRequestMethod);
 
-        helperBuilder.constructorBuilder.addCode("\n"); // to visually separate different event listeners
-        helperBuilder.constructorBuilder.addStatement("$N = $L", listenerName, listenerClass).build();
-        helperBuilder.constructorBuilder.addStatement("$N.register($T.class, $N)", HelperClassBuilder.ACCESS_BUS, eventOrRequestClassName, listenerName).build();
+        initializeListenerInConstructor(helperBuilder, eventOrRequestMethod, listenerName, listenerClass);
 
         helperBuilder.classBuilder.addField(listenerClass.superclass, listenerName, Modifier.PRIVATE, Modifier.FINAL).build();
+    }
+
+    protected void initializeListenerInConstructor(HelperClassBuilder helperBuilder, EventOrRequestMethod eventOrRequestMethod, String listenerName, TypeSpec listenerClass) {
+        helperBuilder.constructorBuilder.addCode("\n"); // to visually separate different event listeners
+        helperBuilder.constructorBuilder.addStatement("$N = $L", listenerName, listenerClass).build();
+        helperBuilder.constructorBuilder.addStatement("$N.register($T.class, $N)", HelperClassBuilder.ACCESS_BUS, eventOrRequestMethod.eventOrRequestClassName, listenerName).build();
     }
 
     /**
