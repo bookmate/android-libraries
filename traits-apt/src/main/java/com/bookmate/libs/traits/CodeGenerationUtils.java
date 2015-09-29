@@ -7,10 +7,8 @@
  */
 package com.bookmate.libs.traits;
 
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
@@ -43,15 +41,13 @@ public class CodeGenerationUtils {
         return new HelperClassBuilder(helperBuilder, constructorBuilder);
     }
 
-    //region Listener class
     /**
      * Creates listener anonymous class. Event and DataRequest listeners code generation has very much in common, so I use this not very elegant code here
      */
     public static TypeSpec createListenerClass(EventOrRequestMethod eventOrRequestMethod) {
-        final boolean isRequest = Utils.isRequest(eventOrRequestMethod.element);
-        String parameterName = isRequest ? "request" : "event";
+        String parameterName = eventOrRequestMethod.isRequest ? "request" : "event";
 
-        return TypeSpec.anonymousClassBuilder("").superclass(getListenerBaseClass(eventOrRequestMethod, isRequest))
+        return TypeSpec.anonymousClassBuilder("").superclass(eventOrRequestMethod.listenerClass)
                 .addMethod(MethodSpec.methodBuilder("process")
                         .addAnnotation(Override.class)
                         .addModifiers(Modifier.PUBLIC)
@@ -61,13 +57,6 @@ public class CodeGenerationUtils {
                         .build())
                 .build();
     }
-
-    protected static ParameterizedTypeName getListenerBaseClass(EventOrRequestMethod eventOrRequestMethod, boolean isRequest) {
-        if (!isRequest)
-            return ParameterizedTypeName.get(ClassName.get(Bus.EventListener.class), eventOrRequestMethod.eventOrRequestClassName);
-        return ParameterizedTypeName.get(ClassName.get(Bus.DataRequestListener.class), eventOrRequestMethod.returnTypeName, eventOrRequestMethod.eventOrRequestClassName); // cur check situation like Bus.DataRequestListener<Document, GetTappedMarkerColor>
-    }
-    //endregion
 
     public static void initializeListenerInConstructor(MethodSpec.Builder constructorBuilder, EventOrRequestMethod eventOrRequestMethod, String listenerName, TypeSpec listenerClass) {
         constructorBuilder.addCode("\n"); // to visually separate different event listeners
