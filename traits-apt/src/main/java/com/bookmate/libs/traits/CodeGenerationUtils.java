@@ -82,8 +82,8 @@ public class CodeGenerationUtils {
             final Writer out = jfo.openWriter();
             javaFile.writeTo(out);
             out.close();
-        } catch (IOException ignored) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "I/O error: couldn't write " + packageName + "." + helperClass.name + " class to file");
+        } catch (IOException e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "I/O error: couldn't write " + packageName + "." + helperClass.name + " class to file. Cause: " + e);
         }
     }
 }

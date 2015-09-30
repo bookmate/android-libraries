@@ -51,8 +51,8 @@ public class MarkersTrait extends BookmateReaderTrait {
 //    void badParameterError(SelectionStart event) {
 //    }
 
-    //    @DataRequest cur test incorrect
-//    Document badReturnTypeError(GetTappedMarkerColor request) {
+//    @DataRequest
+//    String badReturnTypeError(GetTappedMarkerColor request) {
 //        return null;
 //    }
 

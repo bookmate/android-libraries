@@ -55,7 +55,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     protected void addEventOrRequestListener(ExecutableElement methodElement) {
         final HelperClassBuilder helperBuilder = getHelperClassBuilder((TypeElement) methodElement.getEnclosingElement());
 
-        final EventOrRequestMethod eventOrRequestMethod = new EventOrRequestMethod(methodElement);
+        final EventOrRequestMethod eventOrRequestMethod = new EventOrRequestMethod(methodElement, processingEnv.getTypeUtils(), processingEnv.getElementUtils());
         final String listenerName = Utils.toLowerCaseFirstCharacter(eventOrRequestMethod.eventOrRequestClassName.simpleName()) + "Listener" + helperBuilder.getListenersCount(eventOrRequestMethod.eventOrRequestClassName.simpleName());
         final TypeSpec listenerClass = CodeGenerationUtils.createListenerClass(eventOrRequestMethod);
 
