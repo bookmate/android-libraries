@@ -75,15 +75,18 @@ public class CodeGenerationUtils {
     }
 
     public static void writeClassToFile(TypeSpec helperClass, String packageName, ProcessingEnvironment processingEnv) {
+        final String classFullName = packageName + "." + helperClass.name;
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Generating source file for " + classFullName);
+
         JavaFile javaFile = JavaFile.builder(packageName, helperClass).indent("    ").build();
 
         try {
-            JavaFileObject jfo = processingEnv.getFiler().createSourceFile(packageName + "." + helperClass.name);
+            JavaFileObject jfo = processingEnv.getFiler().createSourceFile(classFullName);
             final Writer out = jfo.openWriter();
             javaFile.writeTo(out);
             out.close();
         } catch (IOException e) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "I/O error: couldn't write " + packageName + "." + helperClass.name + " class to file. Cause: " + e); // CUR why I get this message
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "I/O error: couldn't write " + classFullName + " class to file. Cause: " + e);
         }
     }
 }

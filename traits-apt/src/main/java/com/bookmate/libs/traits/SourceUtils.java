@@ -35,7 +35,7 @@ public class SourceUtils {
         for (Element element : roundEnv.getRootElements())
             classNameToTypeElement.put(element.getSimpleName().toString(), (TypeElement) element);
 
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Traits source helper processed " + classNameToTypeElement.size() + " classes in " + (System.currentTimeMillis() - startTime) + " ms");
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Traits source helper processed " + roundEnv.getRootElements().size() + " classes in " + (System.currentTimeMillis() - startTime) + " ms");
     }
 
     public static TypeElement getTypeElement(String classSimpleName) {

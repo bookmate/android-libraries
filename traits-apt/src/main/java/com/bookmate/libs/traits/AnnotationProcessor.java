@@ -31,12 +31,16 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        SourceUtils.buildSourceClassesMap(processingEnv, roundEnv);
+        final Set<? extends Element> eventElements = roundEnv.getElementsAnnotatedWith(Event.class), requestElements = roundEnv.getElementsAnnotatedWith(DataRequest.class);
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Traits: starting processing " + eventElements.size() + " " + Event.class.getSimpleName() + " and " + requestElements.size() + " " + DataRequest.class.getSimpleName() + " annotations");
 
-        for (Element e : roundEnv.getElementsAnnotatedWith(Event.class))
+        SourceUtils.buildSourceClassesMap(processingEnv, roundEnv);
+        helperBuildersMap.clear(); // clears previous round helpers
+
+        for (Element e : eventElements)
             processElement(e);
 
-        for (Element e : roundEnv.getElementsAnnotatedWith(DataRequest.class))
+        for (Element e : requestElements)
             processElement(e);
 
         for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helperBuildersMap.entrySet()) // build helper classes
