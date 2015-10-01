@@ -31,8 +31,10 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        final long startTime = System.currentTimeMillis();
         final Set<? extends Element> eventElements = roundEnv.getElementsAnnotatedWith(Event.class), requestElements = roundEnv.getElementsAnnotatedWith(DataRequest.class);
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Traits: starting processing " + eventElements.size() + " " + Event.class.getSimpleName() + " and " + requestElements.size() + " " + DataRequest.class.getSimpleName() + " annotations");
+
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Traits: starting processing " + eventElements.size() + " " + Event.class.getSimpleName() + " and " + requestElements.size() + " " + DataRequest.class.getSimpleName() + " annotations on " + roundEnv.getRootElements().size() + " classes");
 
         SourceUtils.buildSourceClassesMap(processingEnv, roundEnv);
         helperBuildersMap.clear(); // clears previous round helpers
@@ -45,6 +47,8 @@ public class AnnotationProcessor extends AbstractProcessor {
 
         for (Map.Entry<TypeElement, HelperClassBuilder> helperEntry : helperBuildersMap.entrySet()) // build helper classes
             CodeGenerationUtils.writeClassToFile(helperEntry.getValue().buildClass(), Utils.extractPackageName(helperEntry.getKey()), processingEnv);
+
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Traits: processed in " + (System.currentTimeMillis() - startTime) + " ms");
         return true; // no further processing of this annotation type
     }
 
