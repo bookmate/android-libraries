@@ -7,15 +7,13 @@
  */
 package com.bookmate.libs.demo.traits;
 
-import com.bookmate.libs.traits.BusModule;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class ReaderModule_ extends BusModule {
+public class ReaderModule_ {
 
     @Singleton
     @Provides

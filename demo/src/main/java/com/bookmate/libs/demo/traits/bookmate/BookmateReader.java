@@ -8,10 +8,12 @@
 package com.bookmate.libs.demo.traits.bookmate;
 
 import com.bookmate.libs.demo.traits.readercode.Document;
+import com.bookmate.libs.traits.Bus;
 
 import java.io.Serializable;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -25,6 +27,12 @@ public class BookmateReader implements Serializable { // CUR generate
         this.document = document;
         this.bookmark = bookmark;
         this.discovered = discovered;
+    }
+
+    @Provides
+    @Singleton
+    Bus bus() { // CUR try to use BusModule instead
+        return new Bus();
     }
 
     @Provides
