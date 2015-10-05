@@ -7,6 +7,7 @@
  */
 package com.bookmate.libs.demo.traits.bookmate;
 
+import com.bookmate.libs.demo.R;
 import com.bookmate.libs.demo.traits.MarkersTrait;
 import com.bookmate.libs.demo.traits.ReaderFragment;
 import com.bookmate.libs.demo.traits.ReaderTraitsContainer_;
@@ -18,7 +19,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 
-@EFragment
+@EFragment(R.layout.activity_floating_toolbar)
 @Traits(traits = {SelectionTrait.class, MarkersTrait.class}, sharedFields = {ReadingSystem.class})
 public class BookmateReaderFragment extends ReaderFragment {
 

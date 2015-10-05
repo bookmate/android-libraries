@@ -9,13 +9,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <net.kianoni.fontloader.TextView
-            app:fontFile="typicons.ttf"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="\ue141"
-            android:textSize="@dimen/text_caption" />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

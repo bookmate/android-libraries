@@ -69,7 +69,7 @@ public class Panel extends FrameLayout {
 
             if (getCurrentContainer() == null) {
                 final Container container = new Container(getContext(), currentContainerId);
-                addView(container, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                addView(container, new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 container.setPadding(getToolbar().paddingLeft, getToolbar().paddingTop, getToolbar().paddingRight, getToolbar().paddingBottom);
 
                 if (container.hasBackButton()) {

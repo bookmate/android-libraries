@@ -44,11 +44,12 @@ public class Animations {
      * helper to get animated value of {@link #animateRect}
      */
     public static RectF getAnimatedRect(ValueAnimator animator) {
-        return new RectF((float)animator.getAnimatedValue("l"), (float) animator.getAnimatedValue("t"), (float) animator.getAnimatedValue("r"), (float) animator.getAnimatedValue("b"));
+        return new RectF((float) animator.getAnimatedValue("l"), (float) animator.getAnimatedValue("t"), (float) animator.getAnimatedValue("r"), (float) animator.getAnimatedValue("b"));
     }
 
     /**
      * get current rect in updateListener with valueAnimator.getAnimatedValue("l") etc
+     *
      * @param interpolator null means default
      */
     public static void animateRect(RectF startRect, RectF endRect, ValueAnimator.AnimatorUpdateListener updateListener, TimeInterpolator interpolator, int animationDuration, final Runnable endAction) {

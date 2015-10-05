@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="animationDuration" format="integer" />
+
     <declare-styleable name="Animatable">
-        <attr name="animationDuration" format="integer" />
+        <attr name="animationDuration" />
     </declare-styleable>
 </resources>

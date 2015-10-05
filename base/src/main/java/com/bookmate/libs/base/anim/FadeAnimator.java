@@ -12,6 +12,8 @@ package com.bookmate.libs.base.anim;
  * implements fade in/fade out animation and supports checking against to frequent restarting.
  */
 public class FadeAnimator extends AbstractFadeAnimator {
+    public FadeAnimator() {
+    }
 
     public FadeAnimator(int animationDuration) {
         super(animationDuration);

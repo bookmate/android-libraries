@@ -27,12 +27,15 @@ abstract class AbstractFadeAnimator {
     public void animateVisibility(final View view, boolean show, final Runnable endAction) {
         animateVisibility(view, show, false, endAction);
     }
-
     /**
      * @param preventRestarting if true, doesn't restart if desired visibility is the same as last time
      */
     public void animateVisibility(final View view, final boolean show, boolean preventRestarting) {
         animateVisibility(view, show, preventRestarting, null);
+    }
+
+    public void animateVisibility(final View view, boolean show) {
+        animateVisibility(view, show, false);
     }
 
     /**
