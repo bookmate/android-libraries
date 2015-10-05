@@ -27,6 +27,9 @@
         <activity
             android:name="com.bookmate.libs.demo.ReaderActivity_"
             android:label="@string/app_name" />
+        <service
+            android:name=".traits.bookmate.YotaReader_"
+            android:exported="false" />
     </application>
 
 </manifest>

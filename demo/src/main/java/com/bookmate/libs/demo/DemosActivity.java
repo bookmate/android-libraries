@@ -16,6 +16,7 @@ import org.androidannotations.annotations.EActivity;
 public class DemosActivity extends Activity {
     @AfterViews
     void ready() {
-        ImageViewerActivity_.intent(this).start();
+//        ImageViewerActivity_.intent(this).start();
+        ReaderActivity_.intent(this).start();
     }
 }

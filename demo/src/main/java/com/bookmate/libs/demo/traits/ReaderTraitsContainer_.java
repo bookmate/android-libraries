@@ -11,17 +11,21 @@ import android.content.Context;
 
 import com.bookmate.libs.demo.traits.bookmate.BookmateReader;
 import com.bookmate.libs.demo.traits.bookmate.BookmateReaderComponent_;
+import com.bookmate.libs.demo.traits.bookmate.DaggerBookmateReaderComponent_;
 
 public class ReaderTraitsContainer_ {
     public final SelectionTraitHelper_ selectionTraitHelper;
+    public final MarkersTraitHelper_ markersTraitHelper;
 
     public ReaderTraitsContainer_(Context context, BookmateReader bookmateReader) {
-        BookmateReaderComponent_ readerComponent = null;//DaggerBookmateReaderComponent_.builder().bookmateReader(bookmateReader).build();
+        BookmateReaderComponent_ readerComponent = DaggerBookmateReaderComponent_.builder().bookmateReader(bookmateReader).build();
 
         final SelectionTrait_ selectionTrait = SelectionTrait_.getInstance_(context);
         readerComponent.inject(selectionTrait);
+        selectionTraitHelper = new SelectionTraitHelper_(selectionTrait);
+
         final MarkersTrait_ markersTrait = MarkersTrait_.getInstance_(context);
         readerComponent.inject(markersTrait);
-        selectionTraitHelper = new SelectionTraitHelper_(selectionTrait);
+        markersTraitHelper = new MarkersTraitHelper_(markersTrait);
     }
 }
