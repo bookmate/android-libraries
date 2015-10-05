@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Provides type-safe communication between submodules. Consists of event and request systems. CUR javadoc
+ * Provides type-safe communication. Consists of event and request systems.
  * <p>
  * {@link #event(Object)} is used to notify about some event and to pass some data via it's parameter. There can be any number of listeners of event of certain type
  * <p>
- * {@link #requestData(DataRequest)} is used to retrieve some data from another submodule. There can be ONLY ONE listener of request of certain type.
+ * {@link #requestData(DataRequest)} is used to retrieve some data. There can be ONLY ONE listener of request of certain type.
  */
 @SuppressWarnings("UnusedDeclaration")
 public class Bus {
