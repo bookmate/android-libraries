@@ -13,13 +13,16 @@ import com.bookmate.libs.demo.traits.bookmate.BookmateReader;
 import com.bookmate.libs.demo.traits.bookmate.BookmateReaderFragment_;
 import com.bookmate.libs.demo.traits.readercode.Document;
 
-import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 
-@EActivity
+@EActivity(R.layout.activity_reader)
 public class ReaderActivity extends AppCompatActivity {
-    @AfterInject
+
+    @AfterViews
     void ready() {
-        getFragmentManager().beginTransaction().add(BookmateReaderFragment_.builder().bookmateReader(new BookmateReader(new Document(), "bookmark", "discovered")).build(), "tag").commit();
+        getFragmentManager().beginTransaction()
+                .add(R.id.container, BookmateReaderFragment_.builder().bookmateReader(new BookmateReader(new Document(), "bookmark", "discovered")).build(), "tag")
+                .commit();
     }
 }
