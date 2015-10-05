@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 
@@ -20,7 +21,20 @@ public class BusTest {
     }
 
     @Test
-    public void testEventListener() {
+    public void testRegisterEventListener() {
+        int listenersCount = 10;
+        for (int i = 0; i < listenersCount; i++)
+            bus.register(TestEvent.class, new Bus.EventListener<TestEvent>() {
+                @Override
+                public void process(TestEvent event) {
+                }
+            });
+        assertEquals(listenersCount, bus.eventListeners.get(TestEvent.class).size());
+        assertNull(bus.eventListeners.get(TestEvent2.class));
+    }
+
+    @Test
+    public void testBusDeliversEvent() {
         bus.register(TestEvent.class, new Bus.EventListener<TestEvent>() {
             @Override
             public void process(TestEvent event) {
@@ -61,6 +75,19 @@ public class BusTest {
 
         assertNotEquals(eventParam, event1GotParam);
         assertEquals(eventParam, event2GotParam);
+    }
+
+    @Test
+    public void testRegisterRequestListener() {
+        for (int i = 0; i < 10; i++)
+            bus.register(TestRequest.class, new Bus.DataRequestListener<Integer, TestRequest>() {
+                @Override
+                public Integer process(TestRequest request) {
+                    return null;
+                }
+            });
+        assertNotNull(bus.dataRequestListeners.get(TestRequest.class));
+        assertNull(bus.dataRequestListeners.get(TestRequestDefaultResult.class));
     }
 
     @Test
@@ -115,6 +142,9 @@ public class BusTest {
         private TestRequest(int param) {
             this.param = param;
         }
+    }
+
+    private static class TestEvent2 {
     }
 
     private static class TestEvent {

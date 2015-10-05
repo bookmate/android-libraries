@@ -15,8 +15,8 @@ import java.util.Map;
 @SuppressWarnings("UnusedDeclaration")
 public class Bus {
 
-    private final Map<Class<?>, DataRequestListener> dataRequestListeners = new HashMap<>();
-    private final Map<Class<?>, List<EventListener>> eventListeners = new HashMap<>();
+    protected final Map<Class<?>, DataRequestListener> dataRequestListeners = new HashMap<>();
+    protected final Map<Class<?>, List<EventListener>> eventListeners = new HashMap<>();
 
     /**
      * it's better not to call this method directly, but to use {@link com.bookmate.libs.traits.DataRequest} instead
