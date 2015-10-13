@@ -18,7 +18,7 @@ android {
         minSdkVersion 16 // ViewPropertyAnimator.withEndAction is 16+
         targetSdkVersion versions.targetSdk
         versionCode 1
-        versionName "1.0.3"
+        versionName '1.0.5'
     }
     buildTypes {
         release {
@@ -43,5 +43,6 @@ publish { // for publishing run: ./gradlew clean build bintrayUpload -PbintrayKe
     artifactId = 'imageviewer'
     publishVersion = android.defaultConfig.versionName
     desc = 'Simple imageviewer library'
-    website = 'https://github.com/novoda/bintray-release'
+    website = 'https://github.com/novoda/bintray-release' // CUR
+    dryRun = false
 }
