@@ -18,7 +18,7 @@ android {
         minSdkVersion 16 // ViewPropertyAnimator.withEndAction is 16+
         targetSdkVersion versions.targetSdk
         versionCode 1
-        versionName '1.0.7'
+        versionName '1.0.8'
     }
 
     buildTypes {
