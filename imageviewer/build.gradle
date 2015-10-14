@@ -18,7 +18,7 @@ android {
         minSdkVersion 16 // ViewPropertyAnimator.withEndAction is 16+
         targetSdkVersion versions.targetSdk
         versionCode 1
-        versionName '1.0.6'
+        versionName '1.0.7'
     }
 
     buildTypes {
@@ -36,14 +36,14 @@ dependencies {
     compile 'com.android.support:appcompat-v7:' + versions.appcompatV7 // needed for annotations like @LayoutRes etc
 }
 
-publish { // for publishing run: ./gradlew clean build bintrayUpload -PbintrayKey=<KEY> -PdryRun=false    (<KEY> is here https://bintray.com/profile/edit (login and see)) https://github.com/novoda/bintray-release
+publish { // for publishing run: ./gradlew clean build bintrayUpload -PbintrayKey=<KEY>   (<KEY> is here https://bintray.com/profile/edit (login and see)) https://github.com/novoda/bintray-release
     website = publ.website
     userOrg = publ.organization
     bintrayUser = publ.bintrayUser
     repoName = publ.repoName
     groupId = publ.groupId
-    artifactId = 'imageviewer'
     publishVersion = android.defaultConfig.versionName
+    artifactId = 'imageviewer'
     desc = 'Simple imageviewer library'
-    dryRun = false
+    dryRun = false // use -PdryRun=true to make a test run
 }
