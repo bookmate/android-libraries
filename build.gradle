@@ -15,10 +15,19 @@ allprojects {
     }
 
 }
+
 ext.versions = [ // http://stackoverflow.com/a/9547593/190148
                  compileSdk   : 23
                  , targetSdk  : 23
                  , buildTools : '23.0.1'
                  , appcompatV7: '23.0.1'
                  , bintray    : '0.3.4'
+]
+
+ext.publ = [
+        organization : 'bookmate'
+        , bintrayUser : 'bookmate'
+        , repoName : 'android-libraries'
+        , groupId : 'com.bookmate.libs'
+        , website : 'https://github.com/bookmate/android-libraries'
 ]
