@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ImageViewer">
+        <attr name="animationDuration" />
+        <attr name="createDefaultImageProvider" format="boolean" />
+        <attr name="startWithOriginalSize" format="boolean" />
+    </declare-styleable>
+</resources>

@@ -5,33 +5,29 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   31.07.15
  */
-package com.bookmate.libs.imageviewer.helpers;
+package com.bookmate.libs.imageviewer;
 
 import android.animation.ValueAnimator;
 import android.graphics.RectF;
 import android.view.animation.BounceInterpolator;
 
 import com.bookmate.libs.base.anim.Animations;
-import com.bookmate.libs.imageviewer.ImageProvider;
-import com.bookmate.libs.imageviewer.ImageViewer;
 
 public class ImageRectAnimationHelper {
     protected final ImageViewer imageViewer;
-    protected final ImageProvider imageProvider;
     protected final ImagePositionHelper positionHelper;
     protected final int animationDuration;
     /**
      * means visible and no animation running
      */
-    public boolean isActive;
+    protected boolean isActive;
     /**
      * means visible and showing process finished
      */
-    public boolean isShowing;
+    protected boolean isShowing;
 
-    public ImageRectAnimationHelper(ImageViewer imageViewer, ImageProvider imageProvider, ImagePositionHelper positionHelper, int animationDuration) {
+    public ImageRectAnimationHelper(ImageViewer imageViewer, ImagePositionHelper positionHelper, int animationDuration) {
         this.imageViewer = imageViewer;
-        this.imageProvider = imageProvider;
         this.positionHelper = positionHelper;
         this.animationDuration = animationDuration;
     }
@@ -46,7 +42,7 @@ public class ImageRectAnimationHelper {
         });
 
         if (animateRect)
-            animateImageRect(show ? imageProvider.getInitialImageRect() : positionHelper.getCurrentRect(), show ? positionHelper.getDefaultRect() : imageProvider.getInitialImageRect(), animationDuration, false, show);
+            animateImageRect(show ? imageViewer.getImageProvider().getInitialImageRect() : positionHelper.getCurrentRect(), show ? imageViewer.getInitialShowingRect() : imageViewer.getImageProvider().getInitialImageRect(), animationDuration, false, show);
     }
 
     public void animateImageRect(RectF startRect, RectF endRect) {
@@ -54,6 +50,12 @@ public class ImageRectAnimationHelper {
     }
 
     public void animateImageRect(RectF startRect, RectF endRect, int duration, boolean allowBounce, boolean activateAfterAnimation) {
+        if (startRect == null)
+            startRect = getDefaultAnimRect();
+
+        if (endRect == null)
+            endRect = getDefaultAnimRect();
+
         if (RectCalculations.equal(startRect, endRect)) // discarding equal (or almost equal rects)
             return;
 
@@ -110,6 +112,13 @@ public class ImageRectAnimationHelper {
             return true;
 
         return false;
+    }
+
+    /**
+     * @return default rect is actually just a point in view center
+     */
+    protected RectF getDefaultAnimRect() {
+        return new RectF(imageViewer.getWidth() / 2, imageViewer.getHeight() / 2, imageViewer.getWidth() / 2, imageViewer.getHeight() / 2);
     }
 
 }

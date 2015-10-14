@@ -43,19 +43,15 @@ public class OneFingerGestureListener extends GestureDetector.SimpleOnGestureLis
             return true;
         }
 
-        if (gestures.config.showOnDoubleTap) {
-            boolean result;
+        if (gestures.config.showOnDoubleTap)
             gestures.imageViewer.onShowGesture(e.getRawX(), e.getRawY());
-        }
         return gestures.config.showOnDoubleTap;
     }
 
     @Override
     public void onLongPress(MotionEvent e) {
-        if (gestures.config.showOnLongPress) {
-            boolean result;
+        if (gestures.config.showOnLongPress)
             gestures.imageViewer.onShowGesture(e.getRawX(), e.getRawY());
-        }
     }
 
     @Override

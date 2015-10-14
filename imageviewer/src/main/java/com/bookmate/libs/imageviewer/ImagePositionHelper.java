@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   29.07.15
  */
-package com.bookmate.libs.imageviewer.helpers;
+package com.bookmate.libs.imageviewer;
 
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -18,8 +18,8 @@ public class ImagePositionHelper {
     /**
      * image center coordinates
      */
-    public float currentX;
-    public float currentY;
+    protected float currentX;
+    protected float currentY;
 
     public ImagePositionHelper(ImageView imageView) {
         this.imageView = imageView;
@@ -69,12 +69,19 @@ public class ImagePositionHelper {
     }
 
     /**
-     * @return position rect corresponding to {@link android.widget.ImageView.ScaleType#CENTER_INSIDE}
+     * @return position rect corresponding to {@link ImageView.ScaleType#CENTER_INSIDE}
      * also remembers the scale
      */
     public RectF getDefaultRect() {
         defaultScale = Math.min(1, Math.min(getAspectRatioX(), getAspectRatioY())); // don't upscale the small images, so comparing with 1
         return getScaledImageRectAtViewCenter(defaultScale);
+    }
+
+    /**
+     * @return position rect corresponding to {@link ImageView.ScaleType#FIT_CENTER}
+     */
+    public RectF getFitViewRect() {
+        return getScaledImageRectAtViewCenter(Math.min(getAspectRatioX(), getAspectRatioY()));
     }
 
     /**
@@ -109,11 +116,11 @@ public class ImagePositionHelper {
     }
 
     public RectF[] getImportantRects() {
-        return new RectF[]{getDefaultRect(), getScaledImageRectAtViewCenter(Math.min(getAspectRatioX(), getAspectRatioY())), getScaledImageRectAtViewCenter(Math.max(getAspectRatioX(), getAspectRatioY()))};
+        return new RectF[]{getDefaultRect(), getFitViewRect(), getScaledImageRectAtViewCenter(Math.max(getAspectRatioX(), getAspectRatioY()))};
     }
 
     /**
-     * setups scale and coordinates to fit the positionRect. Actually image is set to be scaled like {@link android.widget.ImageView.ScaleType#CENTER_INSIDE} inside the rect
+     * setups scale and coordinates to fit the positionRect. Actually image is set to be scaled like {@link ImageView.ScaleType#CENTER_INSIDE} inside the rect
      */
     public void setRect(RectF positionRect) {
         currentScale = Math.min(positionRect.width() / imageView.getDrawable().getIntrinsicWidth(), positionRect.height() / imageView.getDrawable().getIntrinsicHeight());

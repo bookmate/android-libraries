@@ -21,14 +21,12 @@ import android.widget.ImageView;
 
 import com.bookmate.libs.imageviewer.gestures.ImageViewerGesturesHelper;
 import com.bookmate.libs.imageviewer.gestures.SearchHierarchyImageProvider;
-import com.bookmate.libs.imageviewer.helpers.ImagePositionHelper;
-import com.bookmate.libs.imageviewer.helpers.ImageRectAnimationHelper;
-import com.bookmate.libs.imageviewer.helpers.RectCalculations;
 
 public class ImageViewer extends ImageView {
     @SuppressWarnings("unused")
     private static final String LOG_TAG = ImageViewer.class.getSimpleName();
 
+    protected final boolean startWithOriginalSize;
     protected final ImagePositionHelper positionHelper;
     protected final ImageRectAnimationHelper animationHelper;
     protected ImageViewerGesturesHelper gesturesHelper;
@@ -38,17 +36,18 @@ public class ImageViewer extends ImageView {
     public ImageViewer(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Animatable);
-        final int animationDuration = a.getInt(R.styleable.Animatable_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
-        a.recycle();
-
         if (getBackground() == null)
             setBackgroundColor(Color.argb(255, 0, 0, 0));
 
-        imageProvider = createImageProvider();
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ImageViewer);
+        startWithOriginalSize = a.getBoolean(R.styleable.ImageViewer_startWithOriginalSize, false);
+        if (a.getBoolean(R.styleable.ImageViewer_createDefaultImageProvider, true))
+            imageProvider = createImageProvider();
+
         positionHelper = createPositionHelper();
-        animationHelper = createAnimationHelper(animationDuration);
+        animationHelper = createAnimationHelper(a.getInt(R.styleable.ImageViewer_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime)));
         gesturesHelper = createGesturesHelper();
+        a.recycle();
 
         setScaleType(ScaleType.MATRIX);
         setVisibility(INVISIBLE);
@@ -80,7 +79,7 @@ public class ImageViewer extends ImageView {
     }
 
     public void scale(float scaleFactor) {
-        if (isActive() && scaleFactor > 1 || positionHelper.isUpScaled())
+        if (isActive() && (scaleFactor > 1 || positionHelper.isUpScaled()))
             positionHelper.scale(scaleFactor);
     }
 
@@ -143,6 +142,10 @@ public class ImageViewer extends ImageView {
     @SuppressWarnings("unused")
     public void setImageProvider(ImageProvider imageProvider) {
         this.imageProvider = imageProvider;
+    }
+
+    public ImageProvider getImageProvider() {
+        return imageProvider;
     }
 
     /**
@@ -209,7 +212,10 @@ public class ImageViewer extends ImageView {
     }
 
     protected ImageRectAnimationHelper createAnimationHelper(int animationDuration) {
-        return new ImageRectAnimationHelper(this, imageProvider, positionHelper, animationDuration);
+        return new ImageRectAnimationHelper(this, positionHelper, animationDuration);
     }
 
+    protected RectF getInitialShowingRect() {
+        return startWithOriginalSize ? positionHelper.getDefaultRect() : positionHelper.getFitViewRect();
+    }
 }

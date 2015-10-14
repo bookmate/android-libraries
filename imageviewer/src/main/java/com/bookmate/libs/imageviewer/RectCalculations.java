@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   31.07.15
  */
-package com.bookmate.libs.imageviewer.helpers;
+package com.bookmate.libs.imageviewer;
 
 import android.graphics.RectF;
 import android.view.View;
