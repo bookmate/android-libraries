@@ -1,0 +1,49 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:' + versions.bintray
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:22.2.0'
+}
+
+android {
+    compileSdkVersion 22 // don't change
+    buildToolsVersion versions.buildTools
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 22 // don't change
+        versionCode 1
+        versionName '1.0.0'
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+}
+
+publish { // for publishing run: ./gradlew clean build bintrayUpload -PbintrayKey=<KEY>   (<KEY> is here https://bintray.com/profile/edit (login and see)) https://github.com/novoda/bintray-release
+    website = publ.website
+    userOrg = publ.organization
+    bintrayUser = publ.bintrayUser
+    repoName = publ.repoName
+    groupId = publ.groupId
+    publishVersion = android.defaultConfig.versionName
+    artifactId = 'viewpagerindicator'
+    desc = 'Customized view pager indicator'
+    dryRun = false // use -PdryRun=true to make a test run
+}
