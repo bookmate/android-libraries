@@ -1,1 +1,5 @@
-include ':demo', ':base', ':imageviewer', ':floatingtoolbar', ':traits-api', ':traits-apt', ':epub', ':ViewPagerIndicator'
+include ':base', ':imageviewer', ':floatingtoolbar'
+include ':traits-api', ':traits-apt'
+include ':epub'
+include ':third-party:ViewPagerIndicator', ':third-party:bottomsheet'
+include ':demo'
