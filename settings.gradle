@@ -1,4 +1,4 @@
-include ':base', ':imageviewer', ':floatingtoolbar'
+include ':base', ':imageviewer', ':floatingtoolbar', ':views'
 include ':traits-api', ':traits-apt'
 include ':epub'
 include ':third-party:ViewPagerIndicator', ':third-party:bottomsheet'
