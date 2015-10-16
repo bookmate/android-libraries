@@ -5,7 +5,7 @@
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
  * Date:   29.05.15
  */
-package com.bookmate.libs.androidviews;
+package com.bookmate.libs.viewscollection;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -21,6 +21,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.bookmate.libs.androidviews.R;
 
 /**
  * Animates text changes: old text fades, width animates, new text appears

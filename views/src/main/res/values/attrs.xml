@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="maxHeight" format="dimension" />
+
+    <declare-styleable name="LimitedHeightView">
+        <attr name="maxHeight" />
+    </declare-styleable>
+
     <declare-styleable name="FadeChangeTextView">
         <attr name="animationDuration" />
     </declare-styleable>

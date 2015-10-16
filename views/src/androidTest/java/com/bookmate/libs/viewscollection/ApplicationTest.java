@@ -1,4 +1,4 @@
-package com.bookmate.libs.androidviews;
+package com.bookmate.libs.viewscollection;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
