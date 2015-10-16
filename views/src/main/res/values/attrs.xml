@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="FadeChangeTextView">
-        <!--<attr name="animationDuration" />--> <!-- FIXME use animationDuration -->
-        <attr name="animDuration" format="integer" />
+        <attr name="animationDuration" />
     </declare-styleable>
 </resources>

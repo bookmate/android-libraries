@@ -28,13 +28,13 @@ import android.widget.TextView;
 public class FadeChangeTextView extends TextView {
     private static final String LOG_TAG = FadeChangeTextView.class.getSimpleName();
 
-    int animDuration;
+    int animationDuration;
     private boolean isAnimating;
 
     public FadeChangeTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FadeChangeTextView);
-        animDuration = a.getInt(R.styleable.FadeChangeTextView_animDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
+        animationDuration = a.getInt(R.styleable.FadeChangeTextView_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
         a.recycle();
     }
 
@@ -62,7 +62,7 @@ public class FadeChangeTextView extends TextView {
                         setLayoutParams(params);
                         return currentWidth;
                     }
-                }, getWidth(), (int) getPaint().measureText(TextUtils.isEmpty(text) ? " " : text.toString()) + getPaddingLeft() + getPaddingRight()).setDuration(animDuration);
+                }, getWidth(), (int) getPaint().measureText(TextUtils.isEmpty(text) ? " " : text.toString()) + getPaddingLeft() + getPaddingRight()).setDuration(animationDuration);
 
                 widthAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
@@ -84,7 +84,7 @@ public class FadeChangeTextView extends TextView {
 
     private void animateColorAlpha(int desiredAlpha, final Runnable endAction) {
         final int currentColor = getCurrentTextColor(), desiredColor = (currentColor & 0x00FFFFFF) | desiredAlpha << 24; // same color bits and new alpha bits
-        final ObjectAnimator animator = ObjectAnimator.ofInt(this, "textColor", currentColor, desiredColor).setDuration(animDuration);
+        final ObjectAnimator animator = ObjectAnimator.ofInt(this, "textColor", currentColor, desiredColor).setDuration(animationDuration);
         animator.setEvaluator(new IntEvaluator() { // we need to change only the alpha-bits, or we get some strange color animation
             @NonNull
             @Override

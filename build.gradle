@@ -20,7 +20,7 @@ ext.versions = [ // http://stackoverflow.com/a/9547593/190148
                  compileSdk   : 23
                  , targetSdk  : 23
                  , buildTools : '23.0.1'
-                 , appcompatV7: '23.0.1'
+                 , appcompatV7: '23.1.0'
                  , bintray    : '0.3.4'
 ]
 
