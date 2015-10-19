@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EmptyView">
+        <attr name="captionNoData" format="reference" />
+        <attr name="captionNetworkError" format="reference" />
+        <attr name="iconNoData" format="reference" />
+        <attr name="iconNetworkError" format="reference" />
+    </declare-styleable>
+</resources>
