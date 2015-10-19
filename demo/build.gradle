@@ -50,6 +50,7 @@ dependencies {
 
     compile project(':imageviewer')
     compile project(':floatingtoolbar')
+    compile project(':views')
 }
 
 

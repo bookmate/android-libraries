@@ -22,7 +22,7 @@ public class LimitedHeightRelativeLayout extends RelativeLayout {
     public LimitedHeightRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LimitedHeightView);
-        maxHeight = a.getInt(R.styleable.LimitedHeightView_maxHeight, -1);
+        maxHeight = a.getDimension(R.styleable.LimitedHeightView_maxHeight, -1);
         a.recycle();
     }
 
