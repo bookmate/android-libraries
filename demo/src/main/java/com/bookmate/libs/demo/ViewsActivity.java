@@ -3,21 +3,25 @@
  * All Rights Reserved.
  * <p/>
  * Author: Dmitry Gordeev <netimen@dreamindustries.co>
- * Date:   28.07.15
+ * Date:   20.10.15
  */
 package com.bookmate.libs.demo;
 
 import android.app.Activity;
 
+import com.bookmate.libs.placeholders.EmptyView;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 
-@EActivity(R.layout.activity_demos)
-public class DemosActivity extends Activity {
+@EActivity(R.layout.activity_views)
+public class ViewsActivity extends Activity {
+    @ViewById
+    EmptyView emptyView;
+
     @AfterViews
     void ready() {
-//        ImageViewerActivity_.intent(this).start();
-//        ReaderActivity_.intent(this).start();
-        ViewsActivity_.intent(this).start();
+        emptyView.showNetworkError(null);
     }
 }

@@ -6,7 +6,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bookmate.libs.androidviews.R;
 
 public class LoadingView extends LinearLayout {
 
@@ -16,8 +15,8 @@ public class LoadingView extends LinearLayout {
 
     public LoadingView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        inflate(getContext(), layout.view_loading, this);
-        spinner = findViewById(R.id.s)
+        inflate(getContext(), R.layout.view_loading, this);
+//        spinner = findViewById(R.id.s)
     }
 
     public LoadingView(Context context) {

@@ -13,11 +13,15 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import com.bookmate.libs.base.Utils;
 
 
 public class EmptyView extends TextView {
+
+    protected static final int DEFAULT_CAPTION_NETWORK_ERROR_RES = R.string.network_error;
+    protected static final int DEFAULT_CAPTION_NO_DATA_RES = R.string.no_data;
+    protected static final int DEFAULT_ICON_NO_DATA_RES = android.R.drawable.ic_menu_info_details;
+    protected static final int DEFAULT_ICON_NETWORK_ERROR_RES = android.R.drawable.ic_menu_info_details;
 
     private OnClickListener onRefreshClickListener;
     private Params params;
@@ -27,25 +31,15 @@ public class EmptyView extends TextView {
         params = loadAttributes(getContext(), attrs);
     }
 
-    /**
-     * now logic is simple: show "no internet" if we had NoConnectivityException, "server error" otherwise.
-     */
     private void setNetworkError(Exception exception) {
-        setText(isNetworkProblem(exception) ? params.captionNetworkErrorRes : R.string.server_error);
+        setNetworkErrorText(exception);
         showIcon(params.iconNetworkErrorRes);
         if (onRefreshClickListener != null)
             setOnClickListener(onRefreshClickListener);
     }
 
-    private boolean isNetworkProblem(Exception exception) {
-        boolean networkProblem = exception instanceof NoNetworkException
-                || exception.getCause() instanceof ConnectivityAwareClient.NoConnectivityException
-                || (exception.getCause() != null && (exception.getCause().getCause() instanceof SocketTimeoutException
-                || exception.getCause().getCause() instanceof UnknownHostException));
-        if (!networkProblem) {
-            Crashlytics.logException(exception);
-        }
-        return networkProblem;
+    protected void setNetworkErrorText(Exception exception) {
+        setText(params.captionNetworkErrorRes);
     }
 
     private void setNoData() {
@@ -93,20 +87,20 @@ public class EmptyView extends TextView {
     public static Params loadAttributes(Context context, AttributeSet attrs) {
         Params params = new Params();
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.EmptyView);
-        params.captionNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_captionNetworkError, R.string.text_no_network);
-        params.captionNoDataRes = a.getResourceId(R.styleable.EmptyView_captionNoData, R.string.text_no_data);
-        params.iconNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_iconNetworkError, R.drawable.ic_refresh);
-        params.iconNoDataRes = a.getResourceId(R.styleable.EmptyView_iconNoData, 0);
+        params.captionNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_captionNetworkError, DEFAULT_CAPTION_NETWORK_ERROR_RES);
+        params.captionNoDataRes = a.getResourceId(R.styleable.EmptyView_captionNoData, DEFAULT_CAPTION_NO_DATA_RES);
+        params.iconNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_iconNetworkError, DEFAULT_ICON_NETWORK_ERROR_RES);
+        params.iconNoDataRes = a.getResourceId(R.styleable.EmptyView_iconNoData, DEFAULT_ICON_NO_DATA_RES);
         a.recycle();
         return params;
     }
 
-    public static Params loadDefaultAttributes() {
+    public static Params loadDefaultAttributes(Context context) {
         Params params = new Params();
-        params.captionNetworkErrorRes = R.string.text_no_network;
-        params.captionNoDataRes = R.string.text_no_data;
-        params.iconNetworkErrorRes = R.drawable.ic_refresh;
-        params.iconNoDataRes = 0;
+        params.captionNetworkErrorRes = Utils.getAttributeValue(context, R.attr.captionNetworkError, DEFAULT_CAPTION_NETWORK_ERROR_RES);
+        params.captionNoDataRes = Utils.getAttributeValue(context, R.attr.captionNoData, DEFAULT_CAPTION_NO_DATA_RES);
+        params.iconNetworkErrorRes = Utils.getAttributeValue(context, R.attr.iconNetworkError, DEFAULT_ICON_NETWORK_ERROR_RES);
+        params.iconNoDataRes = Utils.getAttributeValue(context, R.attr.iconNoData, DEFAULT_ICON_NO_DATA_RES);
         return params;
     }
 
