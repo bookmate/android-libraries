@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.StringRes;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,6 +19,8 @@ public class LoadingView extends LinearLayout {
 
     public LoadingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setOrientation(VERTICAL);
+        setGravity(Gravity.CENTER_HORIZONTAL);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LoadingView);
         @LayoutRes int spinnerResId = a.getResourceId(R.styleable.LoadingView_layoutLoadingText, R.layout.view_loading_spinner);
@@ -25,12 +28,11 @@ public class LoadingView extends LinearLayout {
         @StringRes final int captionLoadingResId = a.getResourceId(R.styleable.LoadingView_captionLoading, R.string.loading);
         a.recycle();
 
-        spinner = (ProgressBar) inflate(getContext(), spinnerResId, this);
-        loadingText = (TextView) inflate(getContext(), loadingTextResId, this);
+        inflate(getContext(), spinnerResId, this);
+        inflate(getContext(), loadingTextResId, this);
+        spinner = (ProgressBar) getChildAt(0);
+        loadingText = (TextView) getChildAt(1);
         loadingText.setText(captionLoadingResId);
-
-        addView(spinner);
-        addView(loadingText);
     }
 
     public LoadingView(Context context) {

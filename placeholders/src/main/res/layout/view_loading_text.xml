@@ -4,8 +4,6 @@
     android:id="@+id/loading_text"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
     android:textColor="@android:color/black"
-    android:textSize="20sp"
-    android:visibility="gone" />
+    android:textSize="20sp" />
 
