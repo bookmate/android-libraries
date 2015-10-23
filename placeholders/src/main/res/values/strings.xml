@@ -2,4 +2,5 @@
 <resources>
     <string name="no_data">no data</string>
     <string name="network_error">network error</string>
+    <string name="loading">loading</string>
 </resources>

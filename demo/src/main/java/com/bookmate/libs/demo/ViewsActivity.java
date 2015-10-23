@@ -18,10 +18,11 @@ import org.androidannotations.annotations.ViewById;
 @EActivity(R.layout.activity_views)
 public class ViewsActivity extends Activity {
     @ViewById
-    EmptyView emptyView;
+    EmptyView emptyView, emptyView2;
 
     @AfterViews
     void ready() {
         emptyView.showNetworkError(null);
+        emptyView2.showNetworkError(null);
     }
 }

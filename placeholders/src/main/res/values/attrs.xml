@@ -5,10 +5,20 @@
     <attr name="iconNoData" format="reference" />
     <attr name="iconNetworkError" format="reference" />
 
+    <attr name="layoutLoadingSpinner" format="reference" />
+    <attr name="layoutLoadingText" format="reference" />
+    <attr name="captionLoading" format="reference" />
+
     <declare-styleable name="EmptyView">
         <attr name="captionNoData" />
         <attr name="captionNetworkError" />
         <attr name="iconNoData" />
         <attr name="iconNetworkError" />
+    </declare-styleable>
+
+    <declare-styleable name="LoadingView">
+        <attr name="layoutLoadingSpinner" />
+        <attr name="layoutLoadingText" />
+        <attr name="captionLoading" />
     </declare-styleable>
 </resources>
