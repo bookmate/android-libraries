@@ -9,6 +9,8 @@
     <attr name="layoutLoadingText" format="reference" />
     <attr name="captionLoading" format="reference" />
 
+    <attr name="layoutEmptyView" format="reference" />
+
     <declare-styleable name="EmptyView">
         <attr name="captionNoData" />
         <attr name="captionNetworkError" />
@@ -20,5 +22,10 @@
         <attr name="layoutLoadingSpinner" />
         <attr name="layoutLoadingText" />
         <attr name="captionLoading" />
+    </declare-styleable>
+
+    <declare-styleable name="LoaderView">
+        <attr name="layoutEmptyView" />
+        <attr name="animationDuration" />
     </declare-styleable>
 </resources>

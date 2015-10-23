@@ -24,7 +24,7 @@ public class EmptyView extends TextView {
     protected static final int DEFAULT_ICON_NETWORK_ERROR_RES = android.R.drawable.ic_menu_info_details;
 
     private OnClickListener onRefreshClickListener;
-    private Params params;
+    Params params;
 
     public EmptyView(Context context, AttributeSet attrs) {
         super(context, attrs);
