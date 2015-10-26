@@ -9,6 +9,7 @@ package com.bookmate.libs.demo;
 
 import android.app.Activity;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.bookmate.libs.placeholders.LoaderView;
 
@@ -22,8 +23,14 @@ public class PlaceholdersActivity extends Activity {
     @ViewById
     LoaderView loaderView;
 
+    @ViewById
+    FrameLayout container;
+
     @AfterViews
     void ready() {
+//        loaderView = new LoaderView(this);
+//        container.addView(loaderView);
+
         loaderView.setOnRefreshClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

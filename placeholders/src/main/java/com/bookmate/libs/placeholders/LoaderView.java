@@ -20,20 +20,25 @@ import com.bookmate.libs.base.anim.FadeAnimator;
 
 public class LoaderView extends FrameLayout {
 
-    private final FadeAnimator fadeAnimator;
-    private final LoadingView loadingView;
-    private final EmptyView emptyView;
+    private FadeAnimator fadeAnimator;
+    private LoadingView loadingView;
+    private EmptyView emptyView;
     private State state;
 
-//    public LoaderView(Context context) { // cur
-//        super(context);
-//    }
+    public LoaderView(Context context) {
+        super(context);
+        create(getResources().getInteger(android.R.integer.config_mediumAnimTime));
+    }
 
     public LoaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LoaderView);
         int animationDuration = a.getInt(R.styleable.LoaderView_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
         a.recycle();
+        create(animationDuration);
+    }
+
+    protected void create(int animationDuration) {
         fadeAnimator = new FadeAnimator(animationDuration);
 
         inflate(getContext(), R.layout.view_loader, this);
