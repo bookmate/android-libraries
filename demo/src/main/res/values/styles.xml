@@ -6,6 +6,7 @@
         <item name="android:textViewStyle">@style/Text</item>
         <item name="captionNoData">@string/no_data</item>
         <item name="loadingViewTextStyle">@style/LoadingViewText</item>
+        <item name="emptyViewStyle">@style/LoadingViewText</item>
     </style>
 
     <style name="Text" parent="@android:style/TextAppearance">

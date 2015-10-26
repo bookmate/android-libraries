@@ -10,12 +10,9 @@ package com.bookmate.libs.placeholders;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -24,9 +21,8 @@ import com.bookmate.libs.base.anim.FadeAnimator;
 public class LoaderView extends FrameLayout {
 
     private final FadeAnimator fadeAnimator;
-    LoadingView loadingView;
-
-    private EmptyView emptyView;
+    private final LoadingView loadingView;
+    private final EmptyView emptyView;
     private State state;
 
 //    public LoaderView(Context context) { // cur
@@ -36,16 +32,13 @@ public class LoaderView extends FrameLayout {
     public LoaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LoaderView);
-        @LayoutRes int emptyViewResId = a.getResourceId(R.styleable.LoaderView_layoutEmptyView, R.layout.view_empty);
         int animationDuration = a.getInt(R.styleable.LoaderView_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
         a.recycle();
         fadeAnimator = new FadeAnimator(animationDuration);
 
-        loadingView = new LoadingView(getContext(), attrs);
-        addView(loadingView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-
-        inflate(getContext(), emptyViewResId, this);
-        emptyView = (EmptyView) getChildAt(getChildCount() - 1);
+        inflate(getContext(), R.layout.view_loader, this);
+        loadingView = (LoadingView) findViewById(R.id.loader_view_loading);
+        emptyView = (EmptyView) findViewById(R.id.loader_view_empty);
     }
 
     public void setOnRefreshClickListener(OnClickListener onClickListener) {
