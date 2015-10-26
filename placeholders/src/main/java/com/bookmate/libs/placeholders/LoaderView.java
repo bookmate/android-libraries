@@ -12,17 +12,17 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.bookmate.libs.base.anim.FadeAnimator;
 
 public class LoaderView extends FrameLayout {
 
-    private FadeAnimator fadeAnimator;
-    private LoadingView loadingView;
-    private EmptyView emptyView;
+    LoadingView loadingView;
+    EmptyView emptyView;
+
+    FadeAnimator fadeAnimator;
+    private final LoaderViewUiThreadHelper uiThreadHelper = new LoaderViewUiThreadHelper(this);
     private State state;
 
     public LoaderView(Context context) {
@@ -50,55 +50,42 @@ public class LoaderView extends FrameLayout {
         emptyView.setOnRefreshClickListener(onClickListener);
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE) // cur
     public void showLoading() {
         state = State.LOADING;
-        setVisibility(View.VISIBLE);
-        emptyView.setVisibility(GONE);
-        loadingView.setVisibility(VISIBLE);
+        uiThreadHelper.showLoadingOnUiThread();
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showNetworkError(@NonNull Exception exception) {
         if (state == State.NETWORK_ERROR)
-            Toast.makeText(getContext(), emptyView.params.captionNetworkErrorRes, Toast.LENGTH_SHORT).show();
+            uiThreadHelper.showToastOnUiThread(emptyView.params.captionNetworkErrorRes);
         else {
             state = State.NETWORK_ERROR;
-            loadingView.setVisibility(GONE);
-            emptyView.showNetworkError(exception);
+            uiThreadHelper.showNetworkErrorOnUiThread(exception);
         }
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showNoData(int noDataTextRes) {
         emptyView.getParams().captionNoDataRes = noDataTextRes;
         showNoData();
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showNoDataIcon(int iconRes) {
         emptyView.getParams().iconNoDataRes = iconRes;
         showNoData();
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showNoData() {
         state = State.NO_DATA;
-        setVisibility(VISIBLE);
-        loadingView.setVisibility(GONE);
-        emptyView.showNoData();
+        uiThreadHelper.showNoDataOnUiThread();
     }
 
     public void hide() {
-        state = null;
-        setVisibility(GONE);
+        hide(false);
     }
 
     public void hide(boolean animate) {
-        if (animate) {
-            fadeAnimator.animateVisibility(this, false);
-        } else
-            hide();
+        state = null;
+        uiThreadHelper.hideOnUiThread(animate);
     }
 
     /**
