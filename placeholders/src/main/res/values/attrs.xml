@@ -5,8 +5,8 @@
     <attr name="iconNoData" format="reference" />
     <attr name="iconNetworkError" format="reference" />
 
-    <attr name="layoutLoadingSpinner" format="reference" />
-    <attr name="layoutLoadingText" format="reference" />
+    <attr name="loadingViewSpinnerStyle" format="reference" />
+    <attr name="loadingViewTextStyle" format="reference" />
     <attr name="captionLoading" format="reference" />
 
     <attr name="layoutEmptyView" format="reference" />

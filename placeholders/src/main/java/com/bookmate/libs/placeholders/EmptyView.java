@@ -21,7 +21,7 @@ public class EmptyView extends TextView {
     protected static final int DEFAULT_CAPTION_NETWORK_ERROR_RES = R.string.network_error;
     protected static final int DEFAULT_CAPTION_NO_DATA_RES = R.string.no_data;
     protected static final int DEFAULT_ICON_NO_DATA_RES = android.R.drawable.ic_menu_info_details;
-    protected static final int DEFAULT_ICON_NETWORK_ERROR_RES = android.R.drawable.ic_menu_info_details;
+    protected static final int DEFAULT_ICON_NETWORK_ERROR_RES = android.R.drawable.ic_menu_rotate;
 
     private OnClickListener onRefreshClickListener;
     Params params;
