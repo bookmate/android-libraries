@@ -8,6 +8,7 @@
 package com.bookmate.libs.demo;
 
 import android.app.Activity;
+import android.view.View;
 
 import com.bookmate.libs.placeholders.LoaderView;
 
@@ -23,10 +24,26 @@ public class PlaceholdersActivity extends Activity {
 
     @AfterViews
     void ready() {
+        loaderView.setOnRefreshClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                load();
+            }
+        });
     }
 
     @Click
-    void refresh() {
+    void load() {
         loaderView.showLoading();
+    }
+
+    @Click
+    void noData() {
+        loaderView.showNoData();
+    }
+
+    @Click
+    void networkError() {
+        loaderView.showNetworkError(new Exception());
     }
 }

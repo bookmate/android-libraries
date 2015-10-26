@@ -73,7 +73,6 @@ public class LoaderView extends FrameLayout {
 
     //    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showNoData(int noDataTextRes) {
-        state = State.NO_DATA;
         emptyView.getParams().captionNoDataRes = noDataTextRes;
         showNoData();
     }
@@ -86,6 +85,7 @@ public class LoaderView extends FrameLayout {
 
     //    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showNoData() {
+        state = State.NO_DATA;
         setVisibility(VISIBLE);
         loadingView.setVisibility(GONE);
         emptyView.showNoData();

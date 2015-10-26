@@ -43,9 +43,10 @@ public class EmptyView extends TextView {
     }
 
     private void setNoData() {
-        if (params.iconNoDataRes != 0)
+        if (params.iconNoDataRes != 0) {
             showIcon(params.iconNoDataRes);
-        else
+            setText(null);
+        } else
             setText(params.captionNoDataRes);
         setOnClickListener(null);
     }

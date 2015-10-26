@@ -8,5 +8,5 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget sem vitae nul
     <string name="floating_toolbar_back">1</string>
     <string name="floating_toolbar_more">2</string>
     <string name="no_data">no data</string>
-    <string name="refresh">refresh</string>
+    <string name="load">load</string>
 </resources>
