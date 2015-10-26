@@ -29,7 +29,7 @@
             android:label="@string/app_name" />
 
         <activity
-            android:name="com.bookmate.libs.demo.ViewsActivity_"
+            android:name=".PlaceholdersActivity_"
             android:label="@string/app_name" />
         <service
             android:name=".traits.bookmate.YotaReader_"

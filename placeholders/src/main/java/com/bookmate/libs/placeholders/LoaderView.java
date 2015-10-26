@@ -29,9 +29,9 @@ public class LoaderView extends FrameLayout {
     private EmptyView emptyView;
     private State state;
 
-    public LoaderView(Context context) {
-        super(context);
-    }
+//    public LoaderView(Context context) { // cur
+//        super(context);
+//    }
 
     public LoaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -40,52 +40,56 @@ public class LoaderView extends FrameLayout {
         int animationDuration = a.getInt(R.styleable.LoaderView_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
         a.recycle();
         fadeAnimator = new FadeAnimator(animationDuration);
-        addView(new LoadingView(getContext(), attrs), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+
+        loadingView = new LoadingView(getContext(), attrs);
+        addView(loadingView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+
         inflate(getContext(), emptyViewResId, this);
+        emptyView = (EmptyView) getChildAt(getChildCount() - 1);
     }
 
     public void setOnRefreshClickListener(OnClickListener onClickListener) {
         emptyView.setOnRefreshClickListener(onClickListener);
     }
 
-//    @UiThread(propagation = UiThread.Propagation.REUSE)
-public void showLoading() {
-    state = State.LOADING;
-    setVisibility(View.VISIBLE);
-    emptyView.setVisibility(GONE);
-    loadingView.setVisibility(VISIBLE);
-}
-
-//    @UiThread(propagation = UiThread.Propagation.REUSE)
-public void showNetworkError(@NonNull Exception exception) {
-    if (state == State.NETWORK_ERROR)
-        Toast.makeText(getContext(), emptyView.params.captionNetworkErrorRes, Toast.LENGTH_SHORT).show();
-    else {
-        state = State.NETWORK_ERROR;
-        loadingView.setVisibility(GONE);
-        emptyView.showNetworkError(exception);
+    //    @UiThread(propagation = UiThread.Propagation.REUSE) // cur
+    public void showLoading() {
+        state = State.LOADING;
+        setVisibility(View.VISIBLE);
+        emptyView.setVisibility(GONE);
+        loadingView.setVisibility(VISIBLE);
     }
-}
 
-//    @UiThread(propagation = UiThread.Propagation.REUSE)
-public void showNoData(int noDataTextRes) {
-    state = State.NO_DATA;
-    emptyView.getParams().captionNoDataRes = noDataTextRes;
-    showNoData();
-}
+    //    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showNetworkError(@NonNull Exception exception) {
+        if (state == State.NETWORK_ERROR)
+            Toast.makeText(getContext(), emptyView.params.captionNetworkErrorRes, Toast.LENGTH_SHORT).show();
+        else {
+            state = State.NETWORK_ERROR;
+            loadingView.setVisibility(GONE);
+            emptyView.showNetworkError(exception);
+        }
+    }
 
-//    @UiThread(propagation = UiThread.Propagation.REUSE)
-public void showNoDataIcon(int iconRes) {
-    emptyView.getParams().iconNoDataRes = iconRes;
-    showNoData();
-}
+    //    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showNoData(int noDataTextRes) {
+        state = State.NO_DATA;
+        emptyView.getParams().captionNoDataRes = noDataTextRes;
+        showNoData();
+    }
 
-//    @UiThread(propagation = UiThread.Propagation.REUSE)
-public void showNoData() {
-    setVisibility(VISIBLE);
-    loadingView.setVisibility(GONE);
-    emptyView.showNoData();
-}
+    //    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showNoDataIcon(int iconRes) {
+        emptyView.getParams().iconNoDataRes = iconRes;
+        showNoData();
+    }
+
+    //    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showNoData() {
+        setVisibility(VISIBLE);
+        loadingView.setVisibility(GONE);
+        emptyView.showNoData();
+    }
 
     public void hide() {
         state = null;

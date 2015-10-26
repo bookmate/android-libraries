@@ -9,20 +9,24 @@ package com.bookmate.libs.demo;
 
 import android.app.Activity;
 
-import com.bookmate.libs.placeholders.EmptyView;
+import com.bookmate.libs.placeholders.LoaderView;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
-@EActivity(R.layout.activity_views)
-public class ViewsActivity extends Activity {
+@EActivity(R.layout.activity_placeholders)
+public class PlaceholdersActivity extends Activity {
     @ViewById
-    EmptyView emptyView, emptyView2;
+    LoaderView loaderView;
 
     @AfterViews
     void ready() {
-        emptyView.showNetworkError(null);
-        emptyView2.showNetworkError(null);
+    }
+
+    @Click
+    void refresh() {
+        loaderView.showLoading();
     }
 }

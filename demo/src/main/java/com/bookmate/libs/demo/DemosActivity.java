@@ -18,6 +18,6 @@ public class DemosActivity extends Activity {
     void ready() {
 //        ImageViewerActivity_.intent(this).start();
 //        ReaderActivity_.intent(this).start();
-        ViewsActivity_.intent(this).start();
+        PlaceholdersActivity_.intent(this).start();
     }
 }

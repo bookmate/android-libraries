@@ -16,7 +16,6 @@ public class LoadingView extends LinearLayout {
     ProgressBar spinner;
     TextView loadingText;
 
-
     public LoadingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOrientation(VERTICAL);
@@ -33,6 +32,8 @@ public class LoadingView extends LinearLayout {
         spinner = (ProgressBar) getChildAt(0);
         loadingText = (TextView) getChildAt(1);
         loadingText.setText(captionLoadingResId);
+
+        setLoadingMode(Mode.SPINNER);
     }
 
     public LoadingView(Context context) {
