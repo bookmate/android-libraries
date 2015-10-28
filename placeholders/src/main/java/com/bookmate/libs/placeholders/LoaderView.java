@@ -36,6 +36,7 @@ public class LoaderView extends FrameLayout {
         int animationDuration = a.getInt(R.styleable.LoaderView_animationDuration, getResources().getInteger(android.R.integer.config_mediumAnimTime));
         a.recycle();
         create(animationDuration);
+        emptyView.setParams(EmptyView.loadAttributes(getContext(), attrs)); // passing attributes to EmptyView
     }
 
     protected void create(int animationDuration) {
