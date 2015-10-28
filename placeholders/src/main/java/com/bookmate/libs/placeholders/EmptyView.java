@@ -25,8 +25,6 @@ public class EmptyView extends TextView {
     protected static final int DEFAULT_ICON_NO_DATA_RES = android.R.drawable.ic_menu_info_details;
     protected static final int DEFAULT_ICON_NETWORK_ERROR_RES = android.R.drawable.ic_menu_rotate;
 
-    private static NetworkErrorLogic networkErrorLogic = new NetworkErrorLogic();
-
     private OnClickListener onRefreshClickListener;
     private Params params;
 
@@ -122,14 +120,21 @@ public class EmptyView extends TextView {
         public int iconNetworkErrorRes, iconNoDataRes;
     }
 
-    public static class NetworkErrorLogic {
+    //region network error logic
+    public static abstract class NetworkErrorLogic {
 
+        public abstract boolean isServerError(Exception exception);
+    }
+
+    private static NetworkErrorLogic networkErrorLogic = new NetworkErrorLogic() {
+        @Override
         public boolean isServerError(Exception exception) {
             return false;
         }
-    }
+    };
 
     public static void setNetworkErrorLogic(NetworkErrorLogic networkErrorLogic) {
         EmptyView.networkErrorLogic = networkErrorLogic;
     }
+    //endregion
 }

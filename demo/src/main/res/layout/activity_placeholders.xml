@@ -11,24 +11,32 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/load"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|start"
-        android:text="@string/load" />
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/no_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/no_data" />
+        <Button
+            android:id="@+id/load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/load" />
 
-    <Button
-        android:id="@+id/network_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|end"
-        android:text="@string/network_error" />
+        <Button
+            android:id="@+id/no_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_data" />
+
+        <Button
+            android:id="@+id/network_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/network_error" />
+
+        <Button
+            android:id="@+id/server_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/server_error" />
+    </LinearLayout>
 </FrameLayout>
