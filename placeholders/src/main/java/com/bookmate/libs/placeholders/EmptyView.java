@@ -9,6 +9,7 @@ package com.bookmate.libs.placeholders;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.StringRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
@@ -18,13 +19,16 @@ import com.bookmate.libs.base.Utils;
 
 public class EmptyView extends TextView {
 
-    protected static final int DEFAULT_CAPTION_NETWORK_ERROR_RES = R.string.network_error;
     protected static final int DEFAULT_CAPTION_NO_DATA_RES = R.string.no_data;
+    protected static final int DEFAULT_CAPTION_NETWORK_ERROR_RES = R.string.network_error;
+    protected static final int DEFAULT_CAPTION_SERVER_ERROR_RES = R.string.server_error;
     protected static final int DEFAULT_ICON_NO_DATA_RES = android.R.drawable.ic_menu_info_details;
     protected static final int DEFAULT_ICON_NETWORK_ERROR_RES = android.R.drawable.ic_menu_rotate;
 
+    private static NetworkErrorLogic networkErrorLogic = new NetworkErrorLogic();
+
     private OnClickListener onRefreshClickListener;
-    Params params;
+    private Params params;
 
     public EmptyView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -32,14 +36,10 @@ public class EmptyView extends TextView {
     }
 
     private void setNetworkError(Exception exception) {
-        setNetworkErrorText(exception);
+        setText(networkErrorLogic.isServerError(exception) ? params.captionServerErrorRes : params.captionNetworkErrorRes);
         showIcon(params.iconNetworkErrorRes);
         if (onRefreshClickListener != null)
             setOnClickListener(onRefreshClickListener);
-    }
-
-    protected void setNetworkErrorText(Exception exception) {
-        setText(params.captionNetworkErrorRes);
     }
 
     private void setNoData() {
@@ -51,6 +51,9 @@ public class EmptyView extends TextView {
         setOnClickListener(null);
     }
 
+    /**
+     * tries to determine whether it's a network connection error or a server problem and display appropriate message
+     */
     public void showNetworkError(Exception exception) {
         setVisibility(View.VISIBLE);
         setNetworkError(exception);
@@ -88,8 +91,9 @@ public class EmptyView extends TextView {
     public static Params loadAttributes(Context context, AttributeSet attrs) {
         Params params = new Params();
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.EmptyView);
-        params.captionNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_captionNetworkError, DEFAULT_CAPTION_NETWORK_ERROR_RES);
         params.captionNoDataRes = a.getResourceId(R.styleable.EmptyView_captionNoData, DEFAULT_CAPTION_NO_DATA_RES);
+        params.captionNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_captionNetworkError, DEFAULT_CAPTION_NETWORK_ERROR_RES);
+        params.captionServerErrorRes = a.getResourceId(R.styleable.EmptyView_captionServerError, DEFAULT_CAPTION_SERVER_ERROR_RES);
         params.iconNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_iconNetworkError, DEFAULT_ICON_NETWORK_ERROR_RES);
         params.iconNoDataRes = a.getResourceId(R.styleable.EmptyView_iconNoData, DEFAULT_ICON_NO_DATA_RES);
         a.recycle();
@@ -98,8 +102,9 @@ public class EmptyView extends TextView {
 
     public static Params loadDefaultAttributes(Context context) {
         Params params = new Params();
-        params.captionNetworkErrorRes = Utils.getAttributeValue(context, R.attr.captionNetworkError, DEFAULT_CAPTION_NETWORK_ERROR_RES);
         params.captionNoDataRes = Utils.getAttributeValue(context, R.attr.captionNoData, DEFAULT_CAPTION_NO_DATA_RES);
+        params.captionNetworkErrorRes = Utils.getAttributeValue(context, R.attr.captionNetworkError, DEFAULT_CAPTION_NETWORK_ERROR_RES);
+        params.captionServerErrorRes = Utils.getAttributeValue(context, R.attr.captionServerError, DEFAULT_CAPTION_SERVER_ERROR_RES);
         params.iconNetworkErrorRes = Utils.getAttributeValue(context, R.attr.iconNetworkError, DEFAULT_ICON_NETWORK_ERROR_RES);
         params.iconNoDataRes = Utils.getAttributeValue(context, R.attr.iconNoData, DEFAULT_ICON_NO_DATA_RES);
         return params;
@@ -110,9 +115,21 @@ public class EmptyView extends TextView {
     }
 
     static class Params {
-        public int iconNetworkErrorRes;
-        public int iconNoDataRes;
-        public int captionNoDataRes;
-        public int captionNetworkErrorRes;
+        @StringRes
+        public int captionNoDataRes, captionNetworkErrorRes, captionServerErrorRes;
+
+        @StringRes
+        public int iconNetworkErrorRes, iconNoDataRes;
+    }
+
+    public static class NetworkErrorLogic {
+
+        public boolean isServerError(Exception exception) {
+            return false;
+        }
+    }
+
+    public static void setNetworkErrorLogic(NetworkErrorLogic networkErrorLogic) {
+        EmptyView.networkErrorLogic = networkErrorLogic;
     }
 }

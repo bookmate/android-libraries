@@ -2,6 +2,7 @@
 <resources>
     <attr name="captionNoData" format="reference" />
     <attr name="captionNetworkError" format="reference" />
+    <attr name="captionServerError" format="reference" />
     <attr name="iconNoData" format="reference" />
     <attr name="iconNetworkError" format="reference" />
 
@@ -14,6 +15,7 @@
     <declare-styleable name="EmptyView">
         <attr name="captionNoData" />
         <attr name="captionNetworkError" />
+        <attr name="captionServerError" />
         <attr name="iconNoData" />
         <attr name="iconNetworkError" />
     </declare-styleable>
