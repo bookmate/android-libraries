@@ -18,7 +18,7 @@ android {
         minSdkVersion 16
         targetSdkVersion versions.targetSdk
         versionCode 1
-        versionName '1.0.2'
+        versionName '1.0.0'
     }
     buildTypes {
         release {
@@ -34,7 +34,6 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:' + versions.appcompatV7
-    // needed for annotations like @LayoutRes etc
 }
 
 publish {
@@ -45,7 +44,7 @@ publish {
     repoName = publ.repoName
     groupId = publ.groupId
     publishVersion = android.defaultConfig.versionName
-    artifactId = 'views-collection'
-    desc = 'Some custom views for use in Android apps'
+    artifactId = 'placeholders'
+    desc = 'Placeholder views for Android (EmptyView etc)'
     dryRun = false // use -PdryRun=true to make a test run
 }
