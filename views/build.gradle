@@ -33,7 +33,7 @@ dependencies {
     compile project(':base');
 
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:' + versions.appcompatV7 // needed for annotations like @LayoutRes etc
+    compile 'com.android.support:support-annotations:' + versions.appcompatV7 // needed for annotations like @LayoutRes etc
 }
 
 publish { // for publishing run: ./gradlew clean build bintrayUpload -PbintrayKey=<KEY>   (<KEY> is here https://bintray.com/profile/edit (login and see)) https://github.com/novoda/bintray-release
