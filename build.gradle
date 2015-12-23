@@ -5,7 +5,10 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.3.0'
+        classpath 'com.android.tools.build:gradle:1.5.0'
+
+        // https://github.com/dcendents/android-maven-gradle-plugin#note-on-releases
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
     }
 }
 
@@ -19,15 +22,15 @@ allprojects {
 ext.versions = [ // http://stackoverflow.com/a/9547593/190148
                  compileSdk   : 23
                  , targetSdk  : 23
-                 , buildTools : '23.0.1'
-                 , appcompatV7: '23.1.0'
+                 , buildTools : '23.0.2' // http://developer.android.com/intl/ru/tools/revisions/build-tools.html
+                 , appcompatV7: '23.1.1' // http://developer.android.com/intl/ru/tools/support-library/index.html
                  , bintray    : '0.3.4'
 ]
 
 ext.publ = [
         organization : 'bookmate'
-        , bintrayUser : 'bookmate'
-        , repoName : 'android-libraries'
-        , groupId : 'com.bookmate.libs'
-        , website : 'https://github.com/bookmate/android-libraries'
+        , bintrayUser: 'bookmate'
+        , repoName   : 'android-libraries'
+        , groupId    : 'com.bookmate.libs'
+        , website    : 'https://github.com/bookmate/android-libraries'
 ]
