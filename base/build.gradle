@@ -1,14 +1,16 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.github.dcendents.android-maven'
+group = 'com.bookmate'
+//apply plugin: 'com.novoda.bintray-release'
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.novoda:bintray-release:' + versions.bintray
-    }
-}
+//buildscript {
+//    repositories {
+//        jcenter()
+//    }
+//    dependencies {
+//        classpath 'com.novoda:bintray-release:' + versions.bintray
+//    }
+//}
 
 android {
     compileSdkVersion versions.compileSdk
@@ -34,15 +36,15 @@ dependencies {
     compile 'com.android.support:appcompat-v7:' + versions.appcompatV7
 }
 
-publish { // for publishing run: ./gradlew clean build bintrayUpload -PbintrayKey=<KEY>   (<KEY> is here https://bintray.com/profile/edit (login and see)) https://github.com/novoda/bintray-release
-    website = publ.website
-    userOrg = publ.organization
-    bintrayUser = publ.bintrayUser
-    repoName = publ.repoName
-    groupId = publ.groupId
-    publishVersion = android.defaultConfig.versionName
-    artifactId = 'base'
-    desc = 'Basic module for Bookmate Android libraries'
-    dryRun = false // use -PdryRun=true to make a test run
-}
+//publish { // for publishing run: ./gradlew clean build bintrayUpload -PbintrayKey=<KEY>   (<KEY> is here https://bintray.com/profile/edit (login and see)) https://github.com/novoda/bintray-release
+//    website = publ.website
+//    userOrg = publ.organization
+//    bintrayUser = publ.bintrayUser
+//    repoName = publ.repoName
+//    groupId = publ.groupId
+//    publishVersion = android.defaultConfig.versionName
+//    artifactId = 'base'
+//    desc = 'Basic module for Bookmate Android libraries'
+//    dryRun = false // use -PdryRun=true to make a test run
+//}
 
