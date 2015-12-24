@@ -23,14 +23,6 @@ ext.versions = [ // http://stackoverflow.com/a/9547593/190148
                  compileSdk   : 23
                  , targetSdk  : 23
                  , buildTools : '23.0.2' // http://developer.android.com/intl/ru/tools/revisions/build-tools.html
-                 , appcompatV7: '23.1.1' // http://developer.android.com/intl/ru/tools/support-library/index.html
-                 , bintray    : '0.3.4'
+                 , support: '23.1.1' // http://developer.android.com/intl/ru/tools/support-library/index.html
 ]
 
-ext.publ = [
-        organization : 'bookmate'
-        , bintrayUser: 'bookmate'
-        , repoName   : 'android-libraries'
-        , groupId    : 'com.bookmate.libs'
-        , website    : 'https://github.com/bookmate/android-libraries'
-]

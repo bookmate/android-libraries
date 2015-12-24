@@ -35,7 +35,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:' + versions.appcompatV7 // needed for annotations like @LayoutRes etc
+    compile 'com.android.support:appcompat-v7:' + versions.support
+    // needed for annotations like @LayoutRes etc
 
     compile 'net.kianoni:fontloader:0.3.0'
     compile 'org.androidannotations:androidannotations-api:3.3.1'

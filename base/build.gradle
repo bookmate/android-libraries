@@ -21,7 +21,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-annotations:' + versions.appcompatV7
+    compile 'com.android.support:support-annotations:' + versions.support
 }
 
 apply from: '../jitpack.gradle'

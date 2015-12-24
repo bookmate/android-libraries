@@ -23,7 +23,7 @@ dependencies {
     compile project(':base');
 
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:support-annotations:' + versions.appcompatV7
+    compile 'com.android.support:support-annotations:' + versions.support
 }
 
 apply from: '../jitpack.gradle'
