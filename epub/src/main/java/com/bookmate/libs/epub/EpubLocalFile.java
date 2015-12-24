@@ -6,11 +6,10 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,10 +33,9 @@ import javax.xml.xpath.XPathFactory;
 /**
  * Created by khmelev on 29.04.14.
  */
-public class EpubLocalFile implements EpubFile {
+public class EpubLocalFile extends AbstractEpubFile {
     @SuppressWarnings("UnusedDeclaration")
     private static final String LOG_TAG = EpubLocalFile.class.getSimpleName();
-    private final String absolutePath;
 
     private ZipFile mZipFile;
     private String mSecret;
@@ -45,9 +43,7 @@ public class EpubLocalFile implements EpubFile {
     private DocumentBuilder mBuilder;
     private XPath mXPath;
 
-    private String mOpfPath;
     private String mNcxPath;
-    private String mRootPath;
 
     private org.w3c.dom.Document mOpf;
     private org.w3c.dom.Document mNcx;
@@ -56,7 +52,6 @@ public class EpubLocalFile implements EpubFile {
         super();
         mZipFile = new ZipFile(file);
         mSecret = secret;
-        absolutePath = file.getAbsolutePath();
 
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -68,12 +63,6 @@ public class EpubLocalFile implements EpubFile {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private String getRootPath() {
-        if (mRootPath == null)
-            mRootPath = FilenameUtils.getPath(getOpfPath());
-        return mRootPath;
     }
 
     private ZipEntry getEntry(String name) {
@@ -91,7 +80,7 @@ public class EpubLocalFile implements EpubFile {
         if (isRoot)
             return mZipFile.getEntry(decodedName);
 
-        String filePath = FilenameUtils.concat(getRootPath(), decodedName);
+        String filePath = IOUtils.concatPath(getRootPath(), decodedName);
         return mZipFile.getEntry(filePath);
     }
 
@@ -102,7 +91,7 @@ public class EpubLocalFile implements EpubFile {
 
     private InputStream getStream(String name, boolean isRoot) throws IOException {
         ZipEntry entry = getEntry(name, isRoot);
-        return IOUtils.toBufferedInputStream(mZipFile.getInputStream(entry));
+        return new BufferedInputStream(mZipFile.getInputStream(entry));
     }
 
     @Override
@@ -114,23 +103,10 @@ public class EpubLocalFile implements EpubFile {
     /**
      * container.xml stores the name of OPF file.
      */
-    private org.w3c.dom.Document getContainer() {
+    @Override
+    org.w3c.dom.Document getContainer() {
         return getDocumentFromZip("META-INF/container.xml");
     }
-
-    private String getOpfPath() {
-        if (mOpfPath != null)
-            return mOpfPath;
-
-        try {
-            org.w3c.dom.Document doc = getContainer();
-            mOpfPath = mXPath.evaluate("//rootfile[@media-type='application/oebps-package+xml']/@full-path", doc);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return mOpfPath;
-    }
-
 
     @Override
     public org.w3c.dom.Document getOpf() {
@@ -161,7 +137,7 @@ public class EpubLocalFile implements EpubFile {
         try {
             org.w3c.dom.Document doc = getOpf();
             String ncxPath = mXPath.evaluate("//item[@media-type='application/x-dtbncx+xml']/@href", doc);
-            mNcxPath = FilenameUtils.concat(getRootPath(), ncxPath);
+            mNcxPath = IOUtils.concatPath(getRootPath(), ncxPath);
         } catch (Exception e) {
             e.printStackTrace();
         }
