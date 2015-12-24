@@ -23,7 +23,6 @@ import java.util.zip.ZipFile;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -38,13 +37,7 @@ public class EpubLocalFile extends AbstractEpubFile {
     private static final String LOG_TAG = EpubLocalFile.class.getSimpleName();
 
     private ZipFile mZipFile;
-    private String mSecret;
-
-    private DocumentBuilder mBuilder;
-    private XPath mXPath;
-
     private String mNcxPath;
-
     private org.w3c.dom.Document mOpf;
     private org.w3c.dom.Document mNcx;
 

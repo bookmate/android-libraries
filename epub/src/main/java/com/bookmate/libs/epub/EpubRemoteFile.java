@@ -16,7 +16,6 @@ import java.util.HashMap;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
 
@@ -27,7 +26,6 @@ public class EpubRemoteFile extends AbstractEpubFile {
     @SuppressWarnings("UnusedDeclaration")
     private static final String LOG_TAG = EpubRemoteFile.class.getSimpleName();
 
-    private final String mSecret;
     private final Api api;
 
     private final String mContainer;
@@ -35,7 +33,6 @@ public class EpubRemoteFile extends AbstractEpubFile {
     private final String mNcx;
     private final HashMap<String, Long> mSizes;
 
-    private DocumentBuilder mBuilder;
     private InputStream cachedStream;
     private String cachedStreamName;
     /**

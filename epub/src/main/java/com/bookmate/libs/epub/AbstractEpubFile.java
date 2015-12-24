@@ -9,12 +9,15 @@ package com.bookmate.libs.epub;
 
 import org.w3c.dom.Document;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPath;
 
 public abstract class AbstractEpubFile implements EpubFile {
     String mRootPath;
     String mOpfPath;
     XPath mXPath;
+    DocumentBuilder mBuilder;
+    String mSecret;
 
     String getRootPath() {
         if (mRootPath == null)
