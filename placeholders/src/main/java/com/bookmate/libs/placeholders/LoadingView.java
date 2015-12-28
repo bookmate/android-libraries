@@ -1,27 +1,32 @@
 package com.bookmate.libs.placeholders;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.support.annotation.StringRes;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bookmate.libs.androidviews.R;
 
 public class LoadingView extends LinearLayout {
 
     ProgressBar spinner;
     TextView loadingText;
 
-
     public LoadingView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        inflate(getContext(), layout.view_loading, this);
-        spinner = findViewById(R.id.s)
-    }
 
-    public LoadingView(Context context) {
-        super(context);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LoadingView);
+        @StringRes final int captionLoadingResId = a.getResourceId(R.styleable.LoadingView_captionLoading, R.string.loading);
+        a.recycle();
+
+        inflate(getContext(), R.layout.view_loading, this);
+        spinner = (ProgressBar) findViewById(R.id.loading_view_spinner);
+        loadingText = (TextView) findViewById(R.id.loading_view_text);
+        loadingText.setText(captionLoadingResId);
+
+        setLoadingMode(Mode.SPINNER);
     }
 
     @SuppressWarnings("SameParameterValue")

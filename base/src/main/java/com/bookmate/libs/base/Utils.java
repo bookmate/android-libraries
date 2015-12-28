@@ -8,9 +8,18 @@
 package com.bookmate.libs.base;
 
 import android.content.Context;
+import android.support.annotation.AttrRes;
+import android.util.TypedValue;
 
 public class Utils {
     public static float px2dp(Context context, float pixels) {
         return pixels / (context.getResources().getDisplayMetrics().densityDpi / 160.f);
+    }
+
+    public static int getAttributeValue(Context context, @AttrRes int attr, int defaultValue) {
+        TypedValue value = new TypedValue();
+        if (context.getTheme().resolveAttribute(attr, value, false))
+            return value.data;
+        return defaultValue;
     }
 }

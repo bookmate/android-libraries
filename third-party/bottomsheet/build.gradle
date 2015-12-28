@@ -1,14 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.novoda:bintray-release:' + versions.bintray
-    }
-}
 
 android {
     compileSdkVersion versions.compileSdk
@@ -30,17 +20,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:' + versions.appcompatV7
+
+    compile 'com.android.support:support-v4:' + versions.support
 }
 
-publish { // for publishing run: ./gradlew clean build bintrayUpload -PbintrayKey=<KEY>   (<KEY> is here https://bintray.com/profile/edit (login and see)) https://github.com/novoda/bintray-release
-    website = publ.website
-    userOrg = publ.organization
-    bintrayUser = publ.bintrayUser
-    repoName = publ.repoName
-    groupId = publ.groupId
-    publishVersion = android.defaultConfig.versionName
-    artifactId = 'bottomsheet'
-    desc = 'customized bottomsheet'
-    dryRun = false // use -PdryRun=true to make a test run
-}
+apply from: '../../jitpack.gradle'

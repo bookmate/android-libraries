@@ -9,15 +9,21 @@ package com.bookmate.libs.placeholders;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.StringRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import com.bookmate.libs.base.Utils;
 
 
 public class EmptyView extends TextView {
+
+    protected static final int DEFAULT_CAPTION_NO_DATA_RES = R.string.no_data;
+    protected static final int DEFAULT_CAPTION_NETWORK_ERROR_RES = R.string.network_error;
+    protected static final int DEFAULT_CAPTION_SERVER_ERROR_RES = R.string.server_error;
+    protected static final int DEFAULT_ICON_NO_DATA_RES = 0;
+    protected static final int DEFAULT_ICON_NETWORK_ERROR_RES = android.R.drawable.ic_menu_rotate;
 
     private OnClickListener onRefreshClickListener;
     private Params params;
@@ -27,35 +33,25 @@ public class EmptyView extends TextView {
         params = loadAttributes(getContext(), attrs);
     }
 
-    /**
-     * now logic is simple: show "no internet" if we had NoConnectivityException, "server error" otherwise.
-     */
     private void setNetworkError(Exception exception) {
-        setText(isNetworkProblem(exception) ? params.captionNetworkErrorRes : R.string.server_error);
+        setText(networkErrorLogic.isServerError(exception) ? params.captionServerErrorRes : params.captionNetworkErrorRes);
         showIcon(params.iconNetworkErrorRes);
         if (onRefreshClickListener != null)
             setOnClickListener(onRefreshClickListener);
     }
 
-    private boolean isNetworkProblem(Exception exception) {
-        boolean networkProblem = exception instanceof NoNetworkException
-                || exception.getCause() instanceof ConnectivityAwareClient.NoConnectivityException
-                || (exception.getCause() != null && (exception.getCause().getCause() instanceof SocketTimeoutException
-                || exception.getCause().getCause() instanceof UnknownHostException));
-        if (!networkProblem) {
-            Crashlytics.logException(exception);
-        }
-        return networkProblem;
-    }
-
     private void setNoData() {
-        if (params.iconNoDataRes != 0)
+        if (params.iconNoDataRes != 0) {
             showIcon(params.iconNoDataRes);
-        else
+            setText(null);
+        } else
             setText(params.captionNoDataRes);
         setOnClickListener(null);
     }
 
+    /**
+     * tries to determine whether it's a network connection error or a server problem and display appropriate message
+     */
     public void showNetworkError(Exception exception) {
         setVisibility(View.VISIBLE);
         setNetworkError(exception);
@@ -93,20 +89,22 @@ public class EmptyView extends TextView {
     public static Params loadAttributes(Context context, AttributeSet attrs) {
         Params params = new Params();
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.EmptyView);
-        params.captionNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_captionNetworkError, R.string.text_no_network);
-        params.captionNoDataRes = a.getResourceId(R.styleable.EmptyView_captionNoData, R.string.text_no_data);
-        params.iconNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_iconNetworkError, R.drawable.ic_refresh);
-        params.iconNoDataRes = a.getResourceId(R.styleable.EmptyView_iconNoData, 0);
+        params.captionNoDataRes = a.getResourceId(R.styleable.EmptyView_captionNoData, DEFAULT_CAPTION_NO_DATA_RES);
+        params.captionNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_captionNetworkError, DEFAULT_CAPTION_NETWORK_ERROR_RES);
+        params.captionServerErrorRes = a.getResourceId(R.styleable.EmptyView_captionServerError, DEFAULT_CAPTION_SERVER_ERROR_RES);
+        params.iconNetworkErrorRes = a.getResourceId(R.styleable.EmptyView_iconNetworkError, DEFAULT_ICON_NETWORK_ERROR_RES);
+        params.iconNoDataRes = a.getResourceId(R.styleable.EmptyView_iconNoData, DEFAULT_ICON_NO_DATA_RES);
         a.recycle();
         return params;
     }
 
-    public static Params loadDefaultAttributes() {
+    public static Params loadDefaultAttributes(Context context) {
         Params params = new Params();
-        params.captionNetworkErrorRes = R.string.text_no_network;
-        params.captionNoDataRes = R.string.text_no_data;
-        params.iconNetworkErrorRes = R.drawable.ic_refresh;
-        params.iconNoDataRes = 0;
+        params.captionNoDataRes = Utils.getAttributeValue(context, R.attr.captionNoData, DEFAULT_CAPTION_NO_DATA_RES);
+        params.captionNetworkErrorRes = Utils.getAttributeValue(context, R.attr.captionNetworkError, DEFAULT_CAPTION_NETWORK_ERROR_RES);
+        params.captionServerErrorRes = Utils.getAttributeValue(context, R.attr.captionServerError, DEFAULT_CAPTION_SERVER_ERROR_RES);
+        params.iconNetworkErrorRes = Utils.getAttributeValue(context, R.attr.iconNetworkError, DEFAULT_ICON_NETWORK_ERROR_RES);
+        params.iconNoDataRes = Utils.getAttributeValue(context, R.attr.iconNoData, DEFAULT_ICON_NO_DATA_RES);
         return params;
     }
 
@@ -115,9 +113,28 @@ public class EmptyView extends TextView {
     }
 
     static class Params {
-        public int iconNetworkErrorRes;
-        public int iconNoDataRes;
-        public int captionNoDataRes;
-        public int captionNetworkErrorRes;
+        @StringRes
+        public int captionNoDataRes, captionNetworkErrorRes, captionServerErrorRes;
+
+        @StringRes
+        public int iconNetworkErrorRes, iconNoDataRes;
     }
+
+    //region network error logic
+    public static abstract class NetworkErrorLogic {
+
+        public abstract boolean isServerError(Exception exception);
+    }
+
+    private static NetworkErrorLogic networkErrorLogic = new NetworkErrorLogic() {
+        @Override
+        public boolean isServerError(Exception exception) {
+            return false;
+        }
+    };
+
+    public static void setNetworkErrorLogic(NetworkErrorLogic networkErrorLogic) {
+        EmptyView.networkErrorLogic = networkErrorLogic;
+    }
+    //endregion
 }

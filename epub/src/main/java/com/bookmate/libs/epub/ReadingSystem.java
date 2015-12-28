@@ -6,8 +6,6 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebResourceResponse;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Matcher;
@@ -211,7 +209,8 @@ public class ReadingSystem {
      * consider a book of 1 item of 2 pages. On page 2 of 2 mNavProgress would still be 0.5 (end of page 1) => progress would be 0.5 and the progress bar would be in the middle, but it's confusing to the user, because it's the last page. Hence we need a different method.
      */
     public float bookProgressForDisplay(int page, int pageCount) {
-        return calcBookProgress(pageCount == 1 ? 1 : ((float) page) / (pageCount - 1)); // now on last page in item the progress will be 1
+        return isLastPageInBook(page, pageCount) ? 100 : // on last page, due to floating point precision errors, calcBookProgress may return 99.99999, but we need 100
+                calcBookProgress(pageCount == 1 ? 1 : ((float) page) / (pageCount - 1)); // now on last page in item the progress will be 1
     }
 
     /**

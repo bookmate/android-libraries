@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="captionNoData" format="reference" />
+    <attr name="captionNetworkError" format="reference" />
+    <attr name="captionServerError" format="reference" />
+    <attr name="iconNoData" format="reference" />
+    <attr name="iconNetworkError" format="reference" />
+
+    <attr name="loadingViewSpinnerStyle" format="reference" />
+    <attr name="loadingViewTextStyle" format="reference" />
+    <attr name="captionLoading" format="reference" />
+
+    <attr name="emptyViewStyle" format="reference" />
+
     <declare-styleable name="EmptyView">
-        <attr name="captionNoData" format="reference" />
-        <attr name="captionNetworkError" format="reference" />
-        <attr name="iconNoData" format="reference" />
-        <attr name="iconNetworkError" format="reference" />
+        <attr name="captionNoData" />
+        <attr name="captionNetworkError" />
+        <attr name="captionServerError" />
+        <attr name="iconNoData" />
+        <attr name="iconNetworkError" />
+    </declare-styleable>
+
+    <declare-styleable name="LoadingView">
+        <attr name="captionLoading" />
+    </declare-styleable>
+
+    <declare-styleable name="LoaderView">
+        <attr name="animationDuration" />
     </declare-styleable>
 </resources>

@@ -3,8 +3,6 @@ package com.bookmate.libs.epub;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.xml.sax.InputSource;
 
 import java.io.IOException;
@@ -18,30 +16,23 @@ import java.util.HashMap;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
 /**
  * Created by khmelev on 29.04.14.
  */
-public class EpubRemoteFile implements EpubFile {
+public class EpubRemoteFile extends AbstractEpubFile {
     @SuppressWarnings("UnusedDeclaration")
     private static final String LOG_TAG = EpubRemoteFile.class.getSimpleName();
 
-    private final String mSecret;
     private final Api api;
 
     private final String mContainer;
     private final String mOpf;
     private final String mNcx;
-    private String mRootPath;
-    private String mOpfPath;
     private final HashMap<String, Long> mSizes;
 
-    private DocumentBuilder mBuilder;
-    private XPath mXPath;
     private InputStream cachedStream;
     private String cachedStreamName;
     /**
@@ -113,26 +104,6 @@ public class EpubRemoteFile implements EpubFile {
         return mSizes.get(getFilePath(name));
     }
 
-    private String getRootPath() {
-        if (mRootPath == null)
-            mRootPath = FilenameUtils.getPath(getOpfPath());
-
-        return mRootPath;
-    }
-
-    private String getOpfPath() {
-        if (mOpfPath != null)
-            return mOpfPath;
-
-        try {
-            org.w3c.dom.Document doc = getContainer();
-            mOpfPath = mXPath.evaluate("//rootfile[@media-type='application/oebps-package+xml']/@full-path", doc);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return mOpfPath;
-    }
 
     private String getFilePath(String name) {
         String decodedName = name;
@@ -142,7 +113,7 @@ public class EpubRemoteFile implements EpubFile {
             e.printStackTrace();
         }
 
-        return FilenameUtils.concat(getRootPath(), decodedName);
+        return IOUtils.concatPath(getRootPath(), decodedName);
     }
 
     @Override
@@ -170,7 +141,8 @@ public class EpubRemoteFile implements EpubFile {
     /**
      * container.xml stores the name of OPF file.
      */
-    private org.w3c.dom.Document getContainer() {
+    @Override
+    org.w3c.dom.Document getContainer() {
         org.w3c.dom.Document doc = null;
         try {
             doc = mBuilder.parse(new InputSource(new StringReader(mContainer)));
