@@ -14,6 +14,9 @@ import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.Toast;
 
+/**
+ * provides calling methods on UI thread. Needed to cleanup LoaderView code
+ */
 class LoaderViewUiThreadHelper {
     private final LoaderView loaderView;
     private final Handler handler = new Handler(Looper.getMainLooper());

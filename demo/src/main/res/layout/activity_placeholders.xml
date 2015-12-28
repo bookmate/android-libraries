@@ -33,7 +33,7 @@
             android:id="@+id/network_error"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/network_error" />
+            android:text="@string/error" />
 
         <Button
             android:id="@+id/server_error"

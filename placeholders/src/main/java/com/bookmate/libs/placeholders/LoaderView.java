@@ -58,7 +58,7 @@ public class LoaderView extends FrameLayout {
 
     public void showNetworkError(@NonNull Exception exception) {
         if (state == State.NETWORK_ERROR)
-            uiThreadHelper.showToastOnUiThread(emptyView.getParams().captionNetworkErrorRes);
+            uiThreadHelper.showToastOnUiThread(emptyView.getParams().captionErrorRes);
         else {
             state = State.NETWORK_ERROR;
             uiThreadHelper.showNetworkErrorOnUiThread(exception);

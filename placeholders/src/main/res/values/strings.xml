@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="no_data">no data</string>
-    <string name="network_error">network error</string>
-    <string name="server_error">server error</string>
+    <string name="error">error</string>
     <string name="loading">loading</string>
 </resources>
