@@ -9,4 +9,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget sem vitae nul
     <string name="floating_toolbar_more">2</string>
     <string name="no_data">no data</string>
     <string name="load">load</string>
+    <string name="server_error">server error</string>
+
+    <string-array name="states">
+        <item>s</item>
+        <item>t</item>
+    </string-array>
+
+    <array name="statesIcons">
+        <item>@android:drawable/ic_btn_speak_now</item>
+        <item>@android:drawable/ic_delete</item>
+    </array>
 </resources>

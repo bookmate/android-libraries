@@ -33,15 +33,15 @@ public class EmptyView extends TextView {
     }
 
     private void setNetworkError(Exception exception) {
-        setText(networkErrorLogic.isServerError(exception) ? params.captionServerErrorRes : params.captionErrorRes);
-        showIcon(params.iconErrorRes);
+//        setText(networkErrorLogic.isServerError(exception) ? params.captionServerErrorRes : params.captionErrorRes);
+//        showIcon(params.iconErrorRes);
         if (onRefreshClickListener != null)
             setOnClickListener(onRefreshClickListener);
     }
 
     private void setNoData() {
         if (params.iconNoDataRes != 0) {
-            showIcon(params.iconNoDataRes);
+//            showIcon(params.iconNoDataRes);
             setText(null);
         } else
             setText(params.captionNoDataRes);

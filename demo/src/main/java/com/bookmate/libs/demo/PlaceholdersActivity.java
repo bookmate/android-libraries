@@ -11,7 +11,6 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.bookmate.libs.placeholders.EmptyView;
 import com.bookmate.libs.placeholders.LoaderView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -29,12 +28,12 @@ public class PlaceholdersActivity extends Activity {
 
     @AfterViews
     void ready() {
-        EmptyView.setNetworkErrorLogic(new EmptyView.NetworkErrorLogic() {
-            @Override
-            public boolean isServerError(Exception exception) {
-                return exception instanceof RuntimeException;
-            }
-        });
+//        EmptyView.setNetworkErrorLogic(new EmptyView.NetworkErrorLogic() {
+//            @Override
+//            public boolean isServerError(Exception exception) {
+//                return exception instanceof RuntimeException;
+//            }
+//        });
 //        loaderView = new LoaderView(this);
 //        container.addView(loaderView);
 

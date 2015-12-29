@@ -12,7 +12,7 @@
 
     <com.bookmate.libs.placeholders.EmptyView
         android:id="@+id/loader_view_empty"
-        style="?attr/emptyViewStyle"
+        style="?attr/emptyViewTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />

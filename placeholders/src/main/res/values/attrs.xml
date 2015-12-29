@@ -9,7 +9,13 @@
     <attr name="loadingViewTextStyle" format="reference" />
     <attr name="captionLoading" format="reference" />
 
-    <attr name="emptyViewStyle" format="reference" />
+    <attr name="emptyViewTextStyle" format="reference" />
+
+    <declare-styleable name="StateView">
+        <attr name="states" format="reference" />
+        <attr name="statesCaptions" format="reference" />
+        <attr name="statesIcons" format="reference" />
+    </declare-styleable>
 
     <declare-styleable name="EmptyView">
         <attr name="captionNoData" />
