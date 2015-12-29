@@ -22,8 +22,6 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bookmate.libs.androidviews.R;
-
 /**
  * Animates text changes: old text fades, width animates, new text appears
  */

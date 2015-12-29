@@ -13,8 +13,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.bookmate.libs.androidviews.R;
-
 public class LimitedHeightLinearLayout extends LinearLayout {
 
     private float maxHeight;

@@ -13,8 +13,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.bookmate.libs.androidviews.R;
-
 public class LimitedHeightRelativeLayout extends RelativeLayout {
 
     private float maxHeight;
