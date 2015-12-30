@@ -13,42 +13,58 @@ import android.support.annotation.StringRes;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+import com.bookmate.libs.base.Utils;
+
 public class StateView extends TextView {
+
+    private final Params params;
 
     public StateView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        loadAttributes(context, attrs);
+        params = loadAttributes(context, attrs);
+        showState(0);
     }
 
-    public void show(String state) {
-//        setText(getCaption(state));
-//        showIcon(getIcon(state));
+    public void showState(int state) {
+        setVisibility(VISIBLE);
+        setState(state);
     }
 
-    private void showIcon(int iconId) {
+    protected void setState(int state) {
+        if (state >= params.statesCount())
+            throw new IllegalArgumentException("incorrect state " + state + ". States count " + params.statesCount());
+
+        setText(getContext().getResources().getText(state < params.captions.length ? params.captions[state] : 0, ""));
+        showIcon(state < params.icons.length ? params.icons[state] : 0);
+    }
+
+    protected void showIcon(int iconId) {
         setCompoundDrawablesWithIntrinsicBounds(0, iconId, 0, 0);
     }
 
-
-    public static Params loadAttributes(Context context, AttributeSet attrs) {
-        Params params = new Params();
+    protected static Params loadAttributes(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StateView);
-        final int iconsArrayId = a.getResourceId(R.styleable.StateView_statesIcons, 0);
-        TypedArray icons = context.getResources().obtainTypedArray(iconsArrayId);
-        icons.recycle();
-//        params.captionNoDataRes = a.getResourceId(R.styleable.EmptyView_captionNoData, DEFAULT_CAPTION_NO_DATA_RES);
-//        params.captionErrorRes = a.getResourceId(R.styleable.EmptyView_captionError, DEFAULT_CAPTION_ERROR_RES);
-//        params.iconErrorRes = a.getResourceId(R.styleable.EmptyView_iconError, DEFAULT_ICON_ERROR_RES);
-//        params.iconNoDataRes = a.getResourceId(R.styleable.EmptyView_iconNoData, DEFAULT_ICON_NO_DATA_RES);
+        int[] captions = Utils.loadResourceIds(a, "string", R.styleable.StateView_statesCaptions, context.getResources().getResourceEntryName(R.attr.statesCaptions));
+        int[] icons = Utils.loadResourceIds(a, "drawable", R.styleable.StateView_statesIcons, context.getResources().getResourceEntryName(R.attr.statesIcons));
         a.recycle();
-        return params;
+
+        return new Params(captions, icons);
     }
 
-    static class Params {
+    protected static class Params {
         @StringRes
-        public int[] captions;
+        public final int[] captions;
 
         @StringRes
-        public int[] icons[];
+        public final int[] icons;
+
+        public Params(int[] captions, int[] icons) {
+            this.captions = captions == null ? new int[0] : captions;
+            this.icons = icons == null ? new int[0] : icons;
+        }
+
+        int statesCount() {
+            return Math.max(captions.length, icons.length);
+        }
     }
 }

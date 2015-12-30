@@ -10,14 +10,21 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget sem vitae nul
     <string name="no_data">no data</string>
     <string name="load">load</string>
     <string name="server_error">server error</string>
+    <string name="other_error">other error</string>
 
     <string-array name="states">
         <item>s</item>
         <item>t</item>
     </string-array>
 
+    <string-array name="statesCaptions">
+        <item>@string/no_data</item>
+        <item>@string/server_error</item>
+        <item>@string/other_error</item>
+    </string-array>
     <array name="statesIcons">
         <item>@android:drawable/ic_btn_speak_now</item>
         <item>@android:drawable/ic_delete</item>
+        <item>@null</item>
     </array>
 </resources>

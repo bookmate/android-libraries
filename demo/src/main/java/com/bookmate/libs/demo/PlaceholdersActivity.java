@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.bookmate.libs.placeholders.LoaderView;
+import com.bookmate.libs.placeholders.StateView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -26,8 +27,19 @@ public class PlaceholdersActivity extends Activity {
     @ViewById
     FrameLayout container;
 
+    @ViewById
+    StateView stateView;
+
     @AfterViews
     void ready() {
+        stateView.setOnClickListener(new View.OnClickListener() {
+            public int state;
+
+            @Override
+            public void onClick(View v) {
+                stateView.showState(++state);
+            }
+        });
 //        EmptyView.setNetworkErrorLogic(new EmptyView.NetworkErrorLogic() {
 //            @Override
 //            public boolean isServerError(Exception exception) {

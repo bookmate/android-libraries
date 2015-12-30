@@ -12,7 +12,6 @@
     <attr name="emptyViewTextStyle" format="reference" />
 
     <declare-styleable name="StateView">
-        <attr name="states" format="reference" />
         <attr name="statesCaptions" format="reference" />
         <attr name="statesIcons" format="reference" />
     </declare-styleable>

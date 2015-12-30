@@ -43,7 +43,9 @@
     </LinearLayout>
 
     <com.bookmate.libs.placeholders.StateView
-        app:states="@array/states"
+        android:id="@+id/state_view"
+        android:layout_gravity="bottom"
+        app:statesCaptions="@array/statesCaptions"
         app:statesIcons="@array/statesIcons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
