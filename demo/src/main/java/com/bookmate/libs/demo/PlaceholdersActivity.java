@@ -11,7 +11,7 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.bookmate.libs.placeholders.LoaderView;
+import com.bookmate.libs.placeholders.LoaderStateView;
 import com.bookmate.libs.placeholders.StateView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -22,7 +22,7 @@ import org.androidannotations.annotations.ViewById;
 @EActivity(R.layout.activity_placeholders)
 public class PlaceholdersActivity extends Activity {
     @ViewById
-    LoaderView loaderView;
+    LoaderStateView loaderView;
 
     @ViewById
     FrameLayout container;
@@ -32,12 +32,13 @@ public class PlaceholdersActivity extends Activity {
 
     @AfterViews
     void ready() {
+        stateView.showState("t");
         stateView.setOnClickListener(new View.OnClickListener() {
             public int state;
 
             @Override
             public void onClick(View v) {
-                stateView.showState(++state);
+//                stateView.showState(++state);
             }
         });
 //        EmptyView.setNetworkErrorLogic(new EmptyView.NetworkErrorLogic() {
@@ -49,31 +50,31 @@ public class PlaceholdersActivity extends Activity {
 //        loaderView = new LoaderView(this);
 //        container.addView(loaderView);
 
-        loaderView.setOnRefreshClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                load();
-            }
-        });
+//        loaderView.setOnRefreshClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                load();
+//            }
+//        });
     }
 
     @Click
     void load() {
-        loaderView.showLoading();
+//        loaderView.showLoading();
     }
 
     @Click
     void noData() {
-        loaderView.showNoData();
+//        loaderView.showNoData();
     }
 
     @Click
     void networkError() {
-        loaderView.showNetworkError(new Exception());
+//        loaderView.showNetworkError(new Exception());
     }
 
     @Click
     void serverError() {
-        loaderView.showNetworkError(new RuntimeException());
+//        loaderView.showNetworkError(new RuntimeException());
     }
 }

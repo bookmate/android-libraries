@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.bookmate.libs.placeholders.LoaderView
+    <com.bookmate.libs.placeholders.LoaderStateView
         android:id="@+id/loader_view"
         app:iconNoData="@android:drawable/ic_btn_speak_now"
         android:layout_width="match_parent"
@@ -45,6 +45,7 @@
     <com.bookmate.libs.placeholders.StateView
         android:id="@+id/state_view"
         android:layout_gravity="bottom"
+        app:states="@array/states"
         app:statesCaptions="@array/statesCaptions"
         app:statesIcons="@array/statesIcons"
         android:layout_width="wrap_content"
