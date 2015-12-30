@@ -18,6 +18,7 @@ import com.bookmate.libs.base.Utils;
 public class StateView extends TextView {
 
     private final Params params;
+    private int state;
 
     public StateView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -30,10 +31,15 @@ public class StateView extends TextView {
         setState(state);
     }
 
+    public int getState() {
+        return state;
+    }
+
     protected void setState(int state) {
         if (state >= params.statesCount())
             throw new IllegalArgumentException("incorrect state " + state + ". States count " + params.statesCount());
 
+        this.state = state;
         setText(getContext().getResources().getText(state < params.captions.length ? params.captions[state] : 0, ""));
         showIcon(state < params.icons.length ? params.icons[state] : 0);
     }
