@@ -383,7 +383,8 @@ public class ReadingSystem {
      *
      * @return cfi like /6/2!/,/2/4/6/3:211,/2/4/6/3:219
      */
-    public String generateCfi(String startCfi, String endCfi) throws XPathExpressionException {
+
+    public String generateCfi(String cfi) throws XPathExpressionException {
         XPathFactory factory = XPathFactory.newInstance();
         XPath xPath = factory.newXPath();
 
@@ -396,7 +397,7 @@ public class ReadingSystem {
         itemRefId = TextUtils.isEmpty(itemRefId) ? "" : "[" + itemRefId + "]";
         int itemRefNumber = (currentItemIndex + 1) * 2;
 //        Log.i(LOG_TAG, "spineNumber " + spineNumber + " itemRefId " + itemRefId + " itemRefNumber " + itemRefNumber);
-        return "/" + spineNumber + "/" + itemRefNumber + itemRefId + "!/," + startCfi + "," + endCfi;
+        return "/" + spineNumber + "/" + itemRefNumber + itemRefId + "!/," + cfi;
     }
 
     /**
