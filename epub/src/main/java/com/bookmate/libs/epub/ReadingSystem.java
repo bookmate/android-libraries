@@ -1,8 +1,10 @@
 package com.bookmate.libs.epub;
 
+import android.content.res.AssetManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebResourceResponse;
 
@@ -29,6 +31,7 @@ public class ReadingSystem {
     private static final Pattern BOOKMARK_PATTERN = Pattern.compile(BOOKMARK_REGEX);
     private static final Pattern CFI_PATTERN = Pattern.compile("(\\d+)!");
     private static final String EPUB_SCHEME = "epub://root/";
+    private static final String ASSET_SCHEME = "file:///android_asset/";
 
     /**
      * should have a synchronized access, so use {@link #getEpubFile}
@@ -312,30 +315,33 @@ public class ReadingSystem {
     /// Links handling and loading stuff
 
     public boolean isInternalLink(String url) {
-        return url.startsWith(EPUB_SCHEME);
+        return url.startsWith(EPUB_SCHEME) || url.startsWith(ASSET_SCHEME);
     }
 
     /**
      * Extracts images, css etc from epub to pass it back to webview
      */
-    public WebResourceResponse getWebResource(String url) {
-        Log.d(LOG_TAG, "getResource " + url);
-
+    public WebResourceResponse getEpubSchemeResource(String url) throws IOException {
         String fileName = url.substring(EPUB_SCHEME.length());
+        return new WebResourceResponse(getMimeType(fileName), "utf-8", getInputStream(fileName));
+    }
 
-        try {
-            String mimeType = null;
-            String extension = MimeTypeMap.getFileExtensionFromUrl(fileName);
-            if (extension != null) {
-                MimeTypeMap mime = MimeTypeMap.getSingleton();
-                mimeType = mime.getMimeTypeFromExtension(extension);
-            }
+    /**
+     * Extracts images, css etc from assets to pass it back to webview
+     */
+    public WebResourceResponse getAssetSchemeResource(String url, AssetManager manager) throws IOException {
+        String fileName = url.substring(ASSET_SCHEME.length());
+        return new WebResourceResponse(getMimeType(fileName), "utf-8", manager.open(fileName));
+    }
 
-            return new WebResourceResponse(mimeType, "utf-8", getInputStream(fileName));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+    private String getMimeType(String fileName){
+        String mimeType = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(fileName);
+        if (extension != null) {
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            mimeType = mime.getMimeTypeFromExtension(extension);
         }
+        return mimeType;
     }
 
     /**
