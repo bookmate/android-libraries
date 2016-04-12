@@ -1,5 +1,6 @@
 package com.bookmate.libs.epub;
 
+import android.content.res.AssetManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,6 +30,7 @@ public class ReadingSystem {
     private static final Pattern BOOKMARK_PATTERN = Pattern.compile(BOOKMARK_REGEX);
     private static final Pattern CFI_PATTERN = Pattern.compile("(\\d+)!");
     private static final String EPUB_SCHEME = "epub://root/";
+    private static final String ASSET_SCHEME = "file:///android_asset/";
 
     /**
      * should have a synchronized access, so use {@link #getEpubFile}
@@ -215,9 +217,9 @@ public class ReadingSystem {
 
     /**
      * https://github.com/bookmate/bookmate-api4/wiki/%D0%A0%D0%B0%D1%81%D1%87%D0%B5%D1%82-%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B5%D1%81%D1%81%D0%B0-%D1%87%D1%82%D0%B5%D0%BD%D0%B8%D1%8F#%D0%A0%D0%B0%D1%81%D1%87%D0%B5%D1%82-%D0%BE%D0%B1%D1%89%D0%B5%D0%B3%D0%BE-%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B5%D1%81%D1%81%D0%B0-%D0%BF%D0%BE-%D0%BA%D0%BD%D0%B8%D0%B3%D0%B5-%D0%BA%D0%BE%D1%82%D0%BE%D1%80%D1%8B%D0%B9-%D0%BE%D1%82%D1%81%D1%8B%D0%BB%D0%B0%D0%B5%D1%82%D1%81%D1%8F-%D0%BD%D0%B0-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80-%D0%B8-%D0%B2%D0%B8%D0%B4%D0%B5%D0%BD-%D0%BD%D0%B0-%D1%81%D0%B0%D0%B9%D1%82%D0%B5-%D1%83-%D0%BA%D0%BD%D0%B8%D0%B3
-     * <p/>
+     * <p>
      * progress = ( item_size * ( item_progress / 100 ) + current ) * 100 / whole;
-     * <p/>
+     * <p>
      * item_size — размер текущего файла в байтах
      * item_progress — текущий прогресс по файлу, расчет описан ниже
      * current — размер в байтах всех файлов по порядку до текущего (не включая текущий)
@@ -311,31 +313,38 @@ public class ReadingSystem {
 
     /// Links handling and loading stuff
 
-    public boolean isInternalLink(String url) {
+    public boolean isEpubScheme(String url) {
         return url.startsWith(EPUB_SCHEME);
+    }
+
+    public boolean isAssetScheme(String url) {
+        return url.startsWith(ASSET_SCHEME);
     }
 
     /**
      * Extracts images, css etc from epub to pass it back to webview
      */
-    public WebResourceResponse getWebResource(String url) {
-        Log.d(LOG_TAG, "getResource " + url);
-
+    public WebResourceResponse getEpubSchemeResource(String url) throws IOException {
         String fileName = url.substring(EPUB_SCHEME.length());
+        return new WebResourceResponse(getMimeType(fileName), "utf-8", getInputStream(fileName));
+    }
 
-        try {
-            String mimeType = null;
-            String extension = MimeTypeMap.getFileExtensionFromUrl(fileName);
-            if (extension != null) {
-                MimeTypeMap mime = MimeTypeMap.getSingleton();
-                mimeType = mime.getMimeTypeFromExtension(extension);
-            }
+    /**
+     * Extracts images, css etc from assets to pass it back to webview
+     */
+    public WebResourceResponse getAssetSchemeResource(String url, AssetManager manager) throws IOException {
+        String fileName = url.substring(ASSET_SCHEME.length());
+        return new WebResourceResponse(getMimeType(fileName), "utf-8", manager.open(fileName));
+    }
 
-            return new WebResourceResponse(mimeType, "utf-8", getInputStream(fileName));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+    private String getMimeType(String fileName) {
+        String mimeType = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(fileName);
+        if (extension != null) {
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            mimeType = mime.getMimeTypeFromExtension(extension);
         }
+        return mimeType;
     }
 
     /**
@@ -383,7 +392,8 @@ public class ReadingSystem {
      *
      * @return cfi like /6/2!/,/2/4/6/3:211,/2/4/6/3:219
      */
-    public String generateCfi(String startCfi, String endCfi) throws XPathExpressionException {
+
+    public String generateCfi(String cfi) throws XPathExpressionException {
         XPathFactory factory = XPathFactory.newInstance();
         XPath xPath = factory.newXPath();
 
@@ -396,7 +406,7 @@ public class ReadingSystem {
         itemRefId = TextUtils.isEmpty(itemRefId) ? "" : "[" + itemRefId + "]";
         int itemRefNumber = (currentItemIndex + 1) * 2;
 //        Log.i(LOG_TAG, "spineNumber " + spineNumber + " itemRefId " + itemRefId + " itemRefNumber " + itemRefNumber);
-        return "/" + spineNumber + "/" + itemRefNumber + itemRefId + "!/," + startCfi + "," + endCfi;
+        return "/" + spineNumber + "/" + itemRefNumber + itemRefId + "!/," + cfi;
     }
 
     /**
