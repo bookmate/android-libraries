@@ -313,10 +313,6 @@ public class ReadingSystem {
 
     /// Links handling and loading stuff
 
-    public boolean isInternalLink(String url) {
-        return url.startsWith(EPUB_SCHEME) || url.startsWith(ASSET_SCHEME);
-    }
-
     public boolean isEpubScheme(String url) {
         return url.startsWith(EPUB_SCHEME);
     }
